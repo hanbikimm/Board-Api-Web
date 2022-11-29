@@ -6,15 +6,23 @@ export default createRouter({
     routes: [
         { 
             path: '/', 
-            redirect: {name: 'boardList'} 
-        },
-        {
-            path: '/board', name: 'boardList', 
-            component: () => import('@/components/board/BoardList.vue') 
+            redirect: {name: 'currentStatus'} 
         },
         {
             path: '/status', name: 'currentStatus',
             component: () => import('@/components/statistic/CurrentStatus.vue')
+        },
+        {
+            path: '/board', name: 'boardList', 
+            component: () => import('@/components/board/BoardList.vue'),
+        },
+        {
+            path: '/question', name: 'questionDetail', 
+            component: () => import('@/components/question/QuestionDetail.vue'),
+        },
+        {
+            path: '/answer', name: 'answerDetail', 
+            component: () => import('@/components/answer/AnswerDetail.vue'),
         },
         {
             path: '/:catchAll(.*)', name: 'notFound',

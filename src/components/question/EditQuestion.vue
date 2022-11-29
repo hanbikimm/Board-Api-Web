@@ -1,6 +1,6 @@
 <template>
 <div>
-    <div class="mx-2">
+    <div class="flex justify-end pt-7">
         <button
             @click="editBtndHandler()"
             class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -21,7 +21,7 @@
         <div class="px-6 py-4 text-left modal-content">
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
-            <p class="text-2xl font-bold mt-2">게시글 수정</p>
+            <p class="text-2xl font-bold mt-2">질문 수정</p>
             <div class="z-50 cursor-pointer modal-close" @click="open = false">
                 <svg
                 class="text-black fill-current"
