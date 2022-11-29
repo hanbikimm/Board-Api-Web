@@ -73,13 +73,13 @@
                 <input
                   class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                   type="password"
-                  v-model="question.secret"/>
+                  v-model="question.secretNum"/>
               </div>
 
               <div class="mt-3">
                 <input class="ml-2 border border-gray-300"
                 type="checkbox"
-                v-model="question.checked"/>
+                v-model="question.secret"/>
                 <label class="text-gray-700 ml-2">
                 조회 보안
                 </label>
@@ -121,8 +121,8 @@ export default {
                 title: '',
                 contents: '',
                 files: '',
+                secretNum: '',
                 secret: '',
-                checked: '',
             }
         }
     },

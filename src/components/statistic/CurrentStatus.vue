@@ -8,7 +8,28 @@
         <p class="text-2xl font-bold mt-5">운영 현황판</p>
     </div>
     <div class="m-10 flex items-center justify-center">
-        > 조회 기간 
+        > 조회 기간 &nbsp;
+        <select v-model="this.date.year">
+            <option disabled value="">년도</option>
+            <option value="2022" selected="selected">2022년</option>
+            <option value="2021">2021년</option>
+            <option value="2020">2020년</option>
+        </select>
+        &nbsp;
+        <select v-model="this.date.month">
+            <option disabled value="">월</option>
+            <option value="1">1월</option>
+            <option value="2">2월</option>
+            <option value="3">3월</option>
+        </select>
+        &nbsp;
+        <select v-model="this.date.week">
+            <option disabled value="">주간</option>
+            <option value="1">첫째주</option>
+            <option value="2">둘째주</option>
+            <option value="3">셋째주</option>
+            <option value="4">넷째주</option>
+        </select>
     </div>
     <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
@@ -29,7 +50,11 @@ export default {
     },
     data() {
         return {
-            date: [],
+            date: {
+                year: '',
+                month: '',
+                week: ''
+            },
             chartData: [
                 ['Date', '조회수', '작성수'],
                 ['월(12/01)', 105, 100],

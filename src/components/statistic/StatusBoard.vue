@@ -1,7 +1,7 @@
 <template>
     <div class="m-3 w-full grid place-items-center">
         <AgGridVue
-        style="height: 471px; width: 1700px"
+        style="height: 363px; width: 1700px"
         class="ag-theme-alpine"
         :columnDefs="columnDefs"
         :rowData="rowData"
