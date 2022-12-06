@@ -21,7 +21,7 @@
         <div class="px-6 py-4 text-left modal-content">
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
-            <p class="text-2xl font-bold mt-2">답변 수정</p>
+            <p class="text-2xl font-bold mt-2">다목적 게시판(답변 수정/삭제)</p>
             <div class="z-50 cursor-pointer modal-close" @click="open = false">
                 <svg
                 class="text-black fill-current"
@@ -37,51 +37,43 @@
             <!--Body-->
             <div>
                 <div class="mt-3">
-                <label class="text-gray-700 ml-2">
-                    제목
-                </label>
-                <input
-                    class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                    type="text"
-                    v-model="answer.title"/>
-                </div>
+                    <label class="text-gray-700 ml-2">
+                        제목
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        v-model="answer.title"/>
 
-                <div class="mt-3">
-                <label class="text-gray-700 ml-2">
-                    내용
-                </label>
-                <textarea id="message" rows="10"
-                v-model="answer.contents"
-                class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
-                </div>
+                    <label class="text-gray-700 ml-2">
+                        내용
+                    </label>
+                    <textarea id="message" rows="10"
+                        v-model="answer.contents"
+                        class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
 
-                <div class="mt-3">
-                <label class="text-gray-700 ml-2">
-                    첨부
-                </label>
-                <input
-                    class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                    type="text"
-                    v-model="answer.files"/>
-                </div>
+                    <label class="text-gray-700 ml-2">
+                        첨부
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        v-model="answer.files"/>
 
-                <div class="mt-3">
-                <label class="text-gray-700 ml-2">
-                    비밀번호 (4자리 숫자)
-                </label>
-                <input
-                    class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                    type="password"
-                    v-model="answer.secret"/>
-                </div>
+                    <label class="text-gray-700 ml-2">
+                        비밀번호 (4자리 숫자)
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="password"
+                        v-model="answer.secret"/>
 
-                <div class="mt-3">
-                <input class="ml-2 border border-gray-300"
-                type="checkbox"
-                v-model="answer.checked"/>
-                <label class="text-gray-700 ml-2">
-                조회 보안
-                </label>
+                    <input class="ml-2 border border-gray-300"
+                        type="checkbox"
+                        v-model="answer.checked"/>
+                    <label class="text-gray-700 ml-2">
+                        조회 보안
+                    </label>
                 </div>
                 
             </div>

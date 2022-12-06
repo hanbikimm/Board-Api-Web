@@ -7,6 +7,7 @@
             > 운영 현황판 가기
         </p>
         <p class="text-2xl font-bold my-5">다목적 게시판</p>
+        <p>> 총 2022 건의 게시물</p>
     </div>
     
     <div class="m-3 w-full grid place-items-center">
