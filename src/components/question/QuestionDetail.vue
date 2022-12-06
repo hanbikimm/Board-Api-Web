@@ -82,7 +82,7 @@
                         <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="password"
-                        v-model="answer.secret"/>
+                        v-model="answer.password"/>
                     </div>
 
                     <div class="mt-3">
@@ -133,7 +133,7 @@ export default {
                 title: '',
                 contents: '',
                 files: '',
-                secret: '',
+                password: '',
                 checked: '',
             },
 
