@@ -75,6 +75,7 @@ export default {
             defaultColDef: {
                 resizable: true,
             },
+            total_boards: '',
 
             paging: {},
 
@@ -98,17 +99,18 @@ export default {
             })
         },
 
-        goToAnswerDetail(id){
-            this.$router.push({
-            name: 'answerDetail',
-            params: { id: id }
-            })
-        },
+        // goToAnswerDetail(id){
+        //     this.$router.push({
+        //     name: 'answerDetail',
+        //     params: { id: id }
+        //     })
+        // },
 
         async getBoardList(){
             try{
                 const results = await BoardApi.boardList();
                 this.rowData = results;
+                // this.total_boards = ressults.
 
             }catch(error){
                 console.log(error);
