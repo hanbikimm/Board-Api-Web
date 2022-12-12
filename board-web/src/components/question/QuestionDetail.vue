@@ -5,7 +5,7 @@
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
                 
-                <p class="text-2xl font-bold mt-2">({{ this.question.id }}) {{ this.question.title }}</p>
+                <p class="text-2xl font-bold mt-2">({{ this.question.bbd_seq }}) {{ this.question.bbd_title }}</p>
                 <div class="z-50 cursor-pointer modal-close" @click="goToBoardList()">
                     <svg
                         class="text-black fill-current"
@@ -20,21 +20,28 @@
             
             <!--Body-->
             <div>
-                <p class="text-lg font-bold">{{ this.question.writer }}</p>
+                <p class="text-lg font-bold">{{ this.question.reg_writer }}</p>
                 <p class="text-sm">
-                    {{ this.question.date }} &nbsp; 조회 {{ this.question.views }}
+                    {{ this.question.reg_datetime }} &nbsp; 조회 {{ this.question.total_views }} &nbsp; 답변 {{ this.question.answer_count }}
                 </p>
                 <hr class="mt-4"/>
             </div>
             <div>
-                <p class="mt-4">{{ this.question.contents }}</p>
-                <p>{{ this.question.files }}</p>
+                <p class="mt-4">{{ this.question.bbd_content }}</p>
+                <p>{{ this.question.bbd_attach_1 }}</p>
                 <hr class="mt-4"/>
             </div>
 
             <div class="flex justify-end pt-7">
             
-                <editQuestion/> <deleteBoard/>
+                <editQuestion/>
+                <div class="flex justify-end pt-7 ml-3">
+                    <button
+                        @click="deleteBoard()"
+                        class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        삭제
+                    </button>
+                </div>
                 <div class="flex justify-end pt-7 ml-3">
                     <button
                     @click="formShow"
@@ -115,42 +122,49 @@
 </div>
 </template>
 <script>
-import deleteBoard from '../modal/DeleteBoard.vue';
+import BoardApi from '@/api/BoardApi';
 import editQuestion from './EditQuestion.vue';
 
 export default {
     name: "questionDetail",
     components: {
     editQuestion,
-    deleteBoard
 },
     
     data() {
         return {
             show: false,
-
-            answer:{
-                writer: '',
-                title: '',
-                contents: '',
-                files: '',
-                password: '',
-                checked: '',
-            },
-
-            question: {
-                id: '2023', 
-                writer: '김한비', 
-                date: '2022-11-31 10:10:10', 
-                views: 5,
-                title: '어려운 질문', 
-                contents: '어려운 질문인데요...... 컴퓨터 개발 환경은 어떻게 하면 쉽게 세팅을 할까요???',
-                files: 'file1.jpg'
-            }
+            question: {},
+            answer:[]
+            
         };
     },
 
     methods: {
+        async getBoardDetail(){
+            try{
+                const data = await BoardApi.boardDetail(this.$route.params.id);
+                this.question = data;
+            }catch(error){
+                console.log(error);
+            }
+        },
+
+        async deleteBoard(){
+            
+            try{
+                if(confirm('정말로 삭제하시겠습니까?')){
+                    await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
+                    alert('성공적으로 삭제되었습니다.');
+                    this.$router.push({name: 'boardList'});
+                }
+                
+            }catch(error){
+                console.log(error)
+            }
+            
+        },
+
         goToBoardList(){
             this.$router.push({
             name: 'boardList',
@@ -167,6 +181,10 @@ export default {
             this.show = !this.show;
         }
     },
+
+    mounted(){
+        this.getBoardDetail();
+    }
     
 }
 </script>

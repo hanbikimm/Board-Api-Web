@@ -14,10 +14,14 @@
         <ag-grid-vue
             style="height: 471px; width: 1403px"
             class="ag-theme-alpine"
+            :gridOptions="gridOptions"
             :columnDefs="columnDefs"
             :rowData="rowData"
+            :rowSelection="rowSelection"
+            @selection-changed="goToQuestionDetail"
             :defaultColDef="defaultColDef"
-            @cell-clicked="goToQuestionDetail()"
+            @grid-ready="onGridReady"
+
         >
         </ag-grid-vue>
     </div>
@@ -65,16 +69,19 @@ export default {
                 { field: "bbd_seq", width: 50, suppressSizeToFit: true },
                 { field: "inq_security_yn", width: 50 },
                 { field: "bbd_title", width: 200 },
-                { field: "answer_count", width: 50},
+                { field: "answer_count", width: 50 },
                 { field: "reg_writer", width: 150 },
                 { field: "reg_datetime", width: 100 },
                 { field: "total_views", width: 50 },
             ],
             rowData: null,
-            gridApi: null,
             defaultColDef: {
                 resizable: true,
             },
+            gridApi: null,
+            columnApi: null,
+            rowSelection: null,
+            gridOptions: {},
             total_boards: '',
 
             paging: {},
@@ -83,28 +90,10 @@ export default {
     },
 
     methods: {
-        enterSecretNum() {
-            
+        onGridReady(params) {
+            this.gridApi = params.api;
+            this.gridColumnApi = params.columnApi;
         },
-
-        goToCurrentStatus(){
-            this.$router.push({
-            name: 'currentStatus',
-            })
-        },
-
-        goToQuestionDetail(){
-            this.$router.push({
-            name: 'questionDetail',
-            })
-        },
-
-        // goToAnswerDetail(id){
-        //     this.$router.push({
-        //     name: 'answerDetail',
-        //     params: { id: id }
-        //     })
-        // },
 
         async getBoardList(){
             try{
@@ -116,6 +105,27 @@ export default {
                 console.log(error);
             }
         },
+
+        enterSecretNum() {
+            
+        },
+
+        goToCurrentStatus(){
+            this.$router.push({
+            name: 'currentStatus',
+            })
+        },
+
+        goToQuestionDetail(){
+            const row = this.gridApi.getSelectedRows();
+            const id = row[0].bbd_seq;
+            this.$router.push({
+            name: 'questionDetail',
+            params: { id: id }
+            })
+        },
+
+        
 
         // 페이징
         prevPage(){
@@ -172,6 +182,7 @@ export default {
         ];
 
         this.getBoardList();
+        this.rowSelection = 'single';
     },
 };
 </script>

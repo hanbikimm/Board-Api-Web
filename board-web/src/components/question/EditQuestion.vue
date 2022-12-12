@@ -133,12 +133,10 @@
 </template>
 
 <script>
-import deleteBoard from '../modal/DeleteBoard.vue';
 
 export default {
     name: "editQuestion",
     components: { 
-        deleteBoard
     },
     data() {
         return {

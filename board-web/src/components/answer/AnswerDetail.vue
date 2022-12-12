@@ -38,7 +38,7 @@
 
             <!--Footer-->
             <div class="flex justify-end pt-7">
-                <editAnswer/> <deleteBoard/>
+                <editAnswer/>
             </div>
         </div>
     </div>
@@ -48,13 +48,11 @@
 </template>
 <script>
 import editAnswer from '@/components/answer/EditAnswer.vue';
-import deleteBoard from '@/components/modal/DeleteBoard.vue';
 
 export default {
     name: "answerDetail",
     components: {
     editAnswer,
-    deleteBoard,
 },
     
     data() {

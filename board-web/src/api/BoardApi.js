@@ -11,8 +11,18 @@ class SchedulerApi{
     }
 
     boardCreate(board){
-        console.log(board)
         return instance.post(this.URL + '/boards', {...board})
+                .then((response)=>response.data)
+    }
+
+    boardDelete(bbdId, ansId){
+        console.log(ansId)
+        return instance.delete(this.URL + `/board/${bbdId}`, bbdId, ansId)
+                .then((response)=>response.data)
+    }
+
+    boardDetail(id){
+        return instance.get(this.URL + `/board/${id}`)
                 .then((response)=>response.data)
     }
 

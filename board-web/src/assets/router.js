@@ -17,7 +17,7 @@ export default createRouter({
             component: () => import('@/components/board/BoardList.vue'),
         },
         {
-            path: '/question', name: 'questionDetail', 
+            path: '/question/:id', name: 'questionDetail', 
             component: () => import('@/components/question/QuestionDetail.vue'),
         },
         {
