@@ -16,7 +16,7 @@ export default {
         confirmDelete(){
             confirm('정말로 삭제하시겠습니까?');
             alert('성공적으로 삭제되었습니다.');
-            this.$router.go();
+            this.$router.push({name: 'boardList'});
         }
     }
 }

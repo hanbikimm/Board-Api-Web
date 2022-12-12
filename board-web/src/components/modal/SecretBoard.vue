@@ -22,7 +22,7 @@
             <div class="px-6 py-4 text-left modal-content">
               <!--Title-->
               <div class="flex items-center justify-between pb-3">
-                <p class="text-2xl font-bold mt-2">암호 입력</p>
+                <p class="text-2xl font-bold mt-2">비밀번호 입력</p>
                 <div class="z-50 cursor-pointer modal-close" @click="open = false">
                   <svg
                     class="text-black fill-current"
@@ -38,13 +38,14 @@
               <!--Body-->
               <div>
                   <div class="mt-3">
-                    <label class="text-gray-700 ml-2">
-                        비밀번호 4자리를 입력해주세요.
+                    <label class="text-gray-700 ml-1">
+                      글을 보시려면 비밀번호를 입력하세요.
                     </label>
                     <input
-                      class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                      class="block w-full p-2 my-3 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                       type="password"
-                      v-model="question.secret"/>
+                      placeholder="4자리 숫자"
+                      v-model="question.password"/>
                   </div>
                 </div>
     
@@ -53,12 +54,12 @@
                 <button
                   @click="itemsCheck()"
                   class="px-6 py-3 text-white bg-blue-700 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
-                  확인
+                    확인
                 </button>
                 <button
                   @click="open = false"
                   class="px-6 py-3 mx-2 text-blue-700 bg-transparent rounded-lg hover:bg-gray-100 hover:text-blue-600 focus:outline-none">
-                  취소
+                    취소
                 </button>
               </div>
             </div>
@@ -79,7 +80,7 @@
 
                 question:{
                     id:'',
-                    secretNum:'',
+                    password:'',
                 },
             }
         },

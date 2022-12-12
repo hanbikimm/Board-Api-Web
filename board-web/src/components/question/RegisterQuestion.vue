@@ -39,49 +39,49 @@
           <div>
               <div class="mt-3">
                 <label class="text-gray-700 ml-2">
+                    작성자
+                </label>
+                <input
+                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                  type="text"
+                  v-model="board.reg_writer"/>
+
+                <label class="text-gray-700 ml-2">
                     제목
                 </label>
                 <input
                   class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                   type="text"
-                  v-model="question.title"/>
-              </div>
+                  v-model="board.bbd_title"/>
 
-              <div class="mt-3">
                 <label class="text-gray-700 ml-2">
-                    내용
+                  내용
                 </label>
                 <textarea id="message" rows="10"
-                v-model="question.contents"
-                class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
-              </div>
+                  v-model="board.bbd_content"
+                  class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
 
-              <div class="mt-3">
                 <label class="text-gray-700 ml-2">
-                    첨부
+                    첨부 (선택)
                 </label>
                 <input
                   class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                   type="text"
-                  v-model="question.files"/>
-              </div>
+                  v-model="board.bbd_attach_1"/>
 
-              <div class="mt-3">
                 <label class="text-gray-700 ml-2">
                     비밀번호 (4자리 숫자)
                 </label>
                 <input
                   class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                   type="password"
-                  v-model="question.secretNum"/>
-              </div>
+                  v-model="board.bbd_password"/>
 
-              <div class="mt-3">
                 <input class="ml-2 border border-gray-300"
-                type="checkbox"
-                v-model="question.secret"/>
+                  type="checkbox"
+                  v-model="board.inq_security_yn"/>
                 <label class="text-gray-700 ml-2">
-                조회 보안
+                  조회 보안
                 </label>
               </div>
               
@@ -108,6 +108,8 @@
 </template>
 
 <script>
+import BoardApi from '@/api/BoardApi';
+
 
 export default {
     name: 'registerQuestion',
@@ -115,24 +117,47 @@ export default {
     data() {
         return {
             open: false,
-            
 
-            question:{
-                title: '',
-                contents: '',
-                files: '',
-                secretNum: '',
-                secret: '',
+            board:{
+                ans_seq: 0,
+                reg_writer: '',
+                bbd_title: '',
+                bbd_content: '',
+                bbd_attach_1: '',
+                bbd_password: '',
+                inq_security_yn: '',
             }
         }
     },
 
     methods: {
         itemsCheck(){
-            alert("질문 등록이 완료되었습니다.");
-            this.$router.go;
-            this.open = false;
+          if(this.board.reg_writer == '' || this.board.bbd_title == '' || 
+          this.board.bbd_content == '' || this.board.bbd_password == ''){
+                alert("항목을 다 입력했는지 확인해주세요!")
+          } else{
+            if(this.board.inq_security_yn == true){
+              this.board.inq_security_yn = 'y';
+            } else{
+              this.board.inq_security_yn = 'n';
+            }
+            this.registerBoard();
+          }
+            
+        },
 
+        async registerBoard(){
+          try {
+            await BoardApi.boardCreate(this.board);
+            alert("게시글 등록이 완료되었습니다!");
+            // this.board = {};
+            // this.open = false;
+            this.$router.go;
+
+          } catch (error) {
+            console.log(error);
+          }
+          
         }
     }
 }
