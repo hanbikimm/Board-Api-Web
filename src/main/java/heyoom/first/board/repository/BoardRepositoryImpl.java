@@ -1,7 +1,7 @@
 package heyoom.first.board.repository;
 
 import java.util.List;
-
+import java.util.Optional;
 
 import javax.sql.DataSource;
 import org.springframework.jdbc.core.RowMapper;
@@ -21,34 +21,55 @@ public class BoardRepositoryImpl implements BoardRepository {
 	
 	@Override
 	public Board postBoard(Board board) {
-		System.out.println(board.getBbd_title());
 		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, ?, null, null, null, null, ?, ?)";
 		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_attach_1(), board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
+	
+	@Override
+	public String deleteBoard(Long bbdId, Long ansId) {		
+		jdbcTemplate.update("DELETE FROM t_bbd WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
+		return "delete";
+		
+	}
+
+
+	@Override
+	public Board updateBoard(Board board) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
 	@Override
 	public List<Board> getBoards() {
-		return jdbcTemplate.query("SELECT a.bbd_seq, a.inq_security_yn, a.bbd_title, \r\n"
+		return jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
 				+ "             (SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
 				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
 				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
-				+ "       FROM bbd.t_bbd a \r\n"
-				+ "       WHERE a.ans_seq = 0  \r\n"
-				+ "       ORDER BY a.bbd_seq desc LIMIT 10", boardRowMapper());
+				+ "       FROM bbd.t_bbd a WHERE a.ans_seq = 0 \r\n"
+				+ "       ORDER BY a.bbd_seq desc LIMIT 10", boardListMapper());
 	}
 	
 	public int getTotalBoards() {
 		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
 		return count;
 	}
+
+	@Override
+	public Optional<Board> getBoard(Long id) {
+		List<Board> result = jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, "
+				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count, "
+				+ "a.reg_writer, a.reg_datetime, a.bbd_content, a.bbd_attach_1, a.bbd_password, "
+				+ "IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views "
+				+ "FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq = 0", boardMapper(), id);
+		return result.stream().findAny();
+	}
 	
-	
-	
-	private RowMapper<Board> boardRowMapper(){
+	private RowMapper<Board> boardListMapper(){
 		return (rs, rowNum) -> {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
+			board.setAns_seq(rs.getLong("ans_seq"));
 			board.setReg_writer(rs.getString("reg_writer"));
 			board.setReg_datetime(rs.getString("reg_datetime"));
 			board.setBbd_title(rs.getString("bbd_title"));
@@ -56,10 +77,29 @@ public class BoardRepositoryImpl implements BoardRepository {
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setAnswer_count(rs.getLong("answer_count"));
 			board.setTotal_views(rs.getLong("total_views"));
-			board.setTotal_boards(rs.getLong("total_boards"));
 			
 			return board;
 		};
 	}
+	
+	private RowMapper<Board> boardMapper(){
+		return (rs, rowNum) -> {
+			Board board = new Board();
+			board.setBbd_seq(rs.getLong("bbd_seq"));
+			board.setAns_seq(rs.getLong("ans_seq"));
+			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_datetime(rs.getString("reg_datetime"));
+			board.setBbd_title(rs.getString("bbd_title"));
+			board.setBbd_content(rs.getString("bbd_content"));
+			board.setBbd_password(rs.getString("bbd_password"));
+			board.setInq_security_yn(rs.getString("inq_security_yn"));
+			board.setAnswer_count(rs.getLong("answer_count"));
+			board.setTotal_views(rs.getLong("total_views"));
+			
+			return board;
+		};
+	}
+
+	
 	
 }

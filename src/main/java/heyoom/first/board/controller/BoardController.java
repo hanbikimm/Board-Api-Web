@@ -1,10 +1,12 @@
 package heyoom.first.board.controller;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,6 +39,18 @@ public class BoardController {
 	@PostMapping(value="/boards")
 	public Board registerBoard(@RequestBody Board board) {
 		return boardService.createBoard(board);
+	}
+	
+	// 게시글 삭제
+	@DeleteMapping(value = "board/{bbdId}")
+	public String removeBoard(@PathVariable("bbdId") Long bbdId, Long ansId) {
+		return boardService.eraseBoard(bbdId, ansId);
+	}
+	
+	// 게시글 상세
+	@GetMapping(value = "board/{id}")
+	public Optional<Board> boardDetail(@PathVariable Long id) {
+		return boardService.getBoardDetail(id);
 	}
 
 }

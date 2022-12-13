@@ -1,6 +1,7 @@
 package heyoom.first.board.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import heyoom.first.board.domain.Board;
 import heyoom.first.board.repository.BoardRepository;
@@ -15,7 +16,6 @@ public class BoardService {
 	
 	public List<Board> getBoardList(){
 		return boardRepository.getBoards();
-		
 	}
 	
 	public Board createBoard(Board board) {
@@ -27,5 +27,13 @@ public class BoardService {
 		boardForm.setBbd_password(board.getBbd_password());
 		boardForm.setInq_security_yn(board.getInq_security_yn());
 		return boardRepository.postBoard(boardForm);
+	}
+	
+	public String eraseBoard(Long bbdId, Long ansId) {
+		return boardRepository.deleteBoard(bbdId, ansId);
+	}
+	
+	public Optional<Board> getBoardDetail(Long id) {
+		return boardRepository.getBoard(id);
 	}
 }

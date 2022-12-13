@@ -17,7 +17,11 @@ class SchedulerApi{
 
     boardDelete(bbdId, ansId){
         console.log(ansId)
-        return instance.delete(this.URL + `/board/${bbdId}`, bbdId, ansId)
+        return instance.delete(this.URL + `/board/${bbdId}`, 
+                { params:{
+                    bbdId: bbdId, 
+                    ansId: ansId 
+                }})
                 .then((response)=>response.data)
     }
 
