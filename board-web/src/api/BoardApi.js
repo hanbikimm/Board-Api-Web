@@ -16,12 +16,16 @@ class SchedulerApi{
     }
 
     boardDelete(bbdId, ansId){
-        console.log(ansId)
         return instance.delete(this.URL + `/board/${bbdId}`, 
                 { params:{
                     bbdId: bbdId, 
                     ansId: ansId 
                 }})
+                .then((response)=>response.data)
+    }
+
+    boardEdit(bbdId, board){
+        return instance.put(this.URL + `/board/${bbdId}`, {...board})
                 .then((response)=>response.data)
     }
 

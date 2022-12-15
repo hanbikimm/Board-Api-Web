@@ -33,6 +33,10 @@ public class BoardService {
 		return boardRepository.deleteBoard(bbdId, ansId);
 	}
 	
+	public Board editBoard(Board board) {
+		return boardRepository.updateBoard(board);
+	}
+	
 	public Optional<Board> getBoardDetail(Long id) {
 		return boardRepository.getBoard(id);
 	}

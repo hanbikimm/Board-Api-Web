@@ -12,7 +12,7 @@
     
     <div class="m-3 w-full grid place-items-center">
         <ag-grid-vue
-            style="height: 471px; width: 1403px"
+            style="height: 519px; width: 1403px"
             class="ag-theme-alpine"
             :gridOptions="gridOptions"
             :columnDefs="columnDefs"
@@ -21,7 +21,8 @@
             @selection-changed="goToQuestionDetail"
             :defaultColDef="defaultColDef"
             @grid-ready="onGridReady"
-
+            :pagination="true"
+            :paginationPageSize="paginationPageSize"
         >
         </ag-grid-vue>
     </div>
@@ -81,6 +82,7 @@ export default {
             gridApi: null,
             columnApi: null,
             rowSelection: null,
+            paginationPageSize: 10,
             gridOptions: {},
             total_boards: '',
 
@@ -99,7 +101,7 @@ export default {
             try{
                 const results = await BoardApi.boardList();
                 this.rowData = results;
-                // this.total_boards = ressults.
+                // this.total_boards = results.
 
             }catch(error){
                 console.log(error);
@@ -177,7 +179,7 @@ export default {
             { headerName: "제목", field: "bbd_title", sortable: true, filter: true },
             { headerName: "답변 수", field: "answer_count", sortable: true, filter: true},
             { headerName: "작성자", field: "reg_writer", sortable: true, filter: true },
-            { headerName: "작성 일시", field: "bbd_datetime", sortable: true, filter: true },
+            { headerName: "작성 일시", field: "reg_datetime", sortable: true, filter: true },
             { headerName: "조회수", field: "total_views", sortable: true, filter: true },
         ];
 

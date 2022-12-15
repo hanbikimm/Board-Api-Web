@@ -2,7 +2,7 @@
 <div>
     <div class="flex justify-end pt-7">
         <button
-            @click="editBtndHandler()"
+            @click="openEditor()"
             class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
             수정
         </button>
@@ -21,7 +21,7 @@
         <div class="px-6 py-4 text-left modal-content">
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
-            <p class="text-2xl font-bold mt-2">질문 수정</p>
+            <p class="text-2xl font-bold mt-2">다목적 게시판(수정)</p>
             <div class="z-50 cursor-pointer modal-close" @click="open = false">
                 <svg
                 class="text-black fill-current"
@@ -35,82 +35,100 @@
             </div>
 
             <!--Body-->
-            <div>
-                <div class="mt-3">
-                    <div class="grid grid-rows-2">
-                        <label class="text-gray-700 ml-2">
-                            순번
-                        </label>
-                        <input
-                            class="block w-1/2 p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                            type="text"
-                            v-model="question.id"/>
-                        
-                        <label class="text-gray-700 ml-2">
-                            조회수
-                        </label>
-                        <input
-                            class="block w-1/2 p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                            type="text"
-                            v-model="question.views"/>
-                    </div>
-                    
- 
+            <!-- <div class="my-3 grid grid-cols-1 gap-6 sm:grid-cols-3">
+                <div>
+                    <label class="text-gray-700 ml-2">
+                        순번
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        :disabled="true"
+                        v-model="question.id"/>
+                </div>
+                
+                <div>
                     <label class="text-gray-700 ml-2">
                         작성 일시
                     </label>
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
+                        :disabled="true"
                         v-model="question.id"/>
+                </div>
 
+                <div>
+                    <label class="text-gray-700 ml-2">
+                        조회수
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        :disabled="true"
+                        v-model="question.views"/>
+                </div>
+            </div> -->
+
+            <div>
+                <div>
+                    <label class="text-gray-700 ml-2 mt-3">
+                        제목
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        v-model="question.bbd_title"/>
+                </div>
+                
+                <div class="mt-3">
+                    <label class="text-gray-700 ml-2">
+                        내용
+                    </label>
+                    <textarea id="message" rows="10"
+                    v-model="question.bbd_content"
+                    class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
+                </div>
+                
+                <div class="mt-3">
+                    <label class="text-gray-700 ml-2 mt-3">
+                        첨부
+                    </label>
+                    <input
+                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                        type="text"
+                        v-model="question.bbd_attach_1"/>
+                </div>
+            </div>
+            <div class="my-3 grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
                     <label class="text-gray-700 ml-2">
                         작성자
                     </label>
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
-                        v-model="question.writer"/>
-
-                    <label class="text-gray-700 ml-2">
-                        제목
-                    </label>
-                    <input
-                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                        type="text"
-                        v-model="question.title"/>
-
-                    <label class="text-gray-700 ml-2">
-                        내용
-                    </label>
-                    <textarea id="message" rows="10"
-                    v-model="question.contents"
-                    class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
-
-                    <label class="text-gray-700 ml-2">
-                        첨부
-                    </label>
-                    <input
-                        class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                        type="text"
-                        v-model="question.files"/>
-
+                        v-model="question.reg_writer"/>
+                </div>
+                
+                <div>
                     <label class="text-gray-700 ml-2">
                         비밀번호 (4자리 숫자)
                     </label>
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="password"
-                        v-model="question.password"/>
-
-                    <input class="ml-2 border border-gray-300"
+                        v-model="question.bbd_password"/>
+                </div>
+                <div>
+                    <input 
+                        class="ml-2 border border-gray-300"
                         type="checkbox"
-                        v-model="question.checked"/>
+                        v-model="question.inq_security_yn"/>
                     <label class="text-gray-700 ml-2">
                         조회 보안
                     </label>
-                </div>
-                
+                </div>   
             </div>
 
             <!--Footer-->
@@ -133,35 +151,56 @@
 </template>
 
 <script>
+import BoardApi from '@/api/BoardApi';
+
 
 export default {
     name: "editQuestion",
+    props:['defaultQuestion'],
     components: { 
     },
     data() {
         return {
             open: false,
-            question: {
-                id: "",
-                views: "",
-                date: "",
-                writer: "",
-                title: "",
-                contents: "",
-                files: "",
-                password: "",
-                checked: "",
-            }
+            question: { }
         };
     },
     methods: {
-        itemsCheck() {
-            alert("질문 수정이 완료되었습니다.");
-            this.$router.go;
-            this.open = false;
-        },
-        editBtndHandler() {
+        openEditor() {
             this.open = true;
+            this.question = {...this.defaultQuestion};
+            if (this.question.inq_security_yn == 'y') {
+                this.question.inq_security_yn = true;
+            } else {
+                this.question.inq_security_yn = false;
+            }
+        },
+
+        itemsCheck() {
+            if(this.question.reg_writer == '' || this.question.bbd_title == '' || 
+          this.question.bbd_content == '' || this.question.bbd_password == ''){
+                alert("항목을 다 입력했는지 확인해주세요!")
+          } else{
+            if(this.question.inq_security_yn == true){
+              this.question.inq_security_yn = 'y';
+            } else{
+              this.question.inq_security_yn = 'n';
+            }
+            this.modifyBoard();
+          }
+        },
+
+        async modifyBoard(){
+            try {
+                await BoardApi.boardEdit(this.question.bbd_seq, this.question);
+                alert('게시글 수정이 완료되었습니다.');
+                this.$router.go();
+            } catch (error) {
+                console.log(error);
+                alert('게시글 수정을 다시 시도해주세요!');
+            }
+            
+
         }
     },
     

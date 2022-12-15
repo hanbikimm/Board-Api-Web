@@ -15,9 +15,6 @@ CREATE TABLE IF NOT EXISTS t_bbd (
     CONSTRAINT pk_bbd_ans PRIMARY KEY (bbd_seq, ans_seq)
 );
 
-CREATE SEQUENCE IF NOT EXISTS seq_bbd;
-CREATE SEQUENCE IF NOT EXISTS seq_ans;
-
 CREATE TABLE IF NOT EXISTS t_inq_cnt (
 	inq_date DATE NOT NULL,
     bbd_seq NUMERIC(10,0) NOT NULL,

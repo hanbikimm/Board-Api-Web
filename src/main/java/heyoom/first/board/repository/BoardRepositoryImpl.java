@@ -26,18 +26,23 @@ public class BoardRepositoryImpl implements BoardRepository {
 		return board;
 	}
 	
+	//transaction 처리 해야함
 	@Override
 	public String deleteBoard(Long bbdId, Long ansId) {		
 		jdbcTemplate.update("DELETE FROM t_bbd WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
+		jdbcTemplate.update("DELETE FROM t_inq_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
+		jdbcTemplate.update("DELETE FROM t_ans_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
 		return "delete";
-		
 	}
 
 
 	@Override
 	public Board updateBoard(Board board) {
-		// TODO Auto-generated method stub
-		return null;
+		jdbcTemplate.update("UPDATE t_bbd SET bbd_title=?, bbd_content=?, reg_writer=?, bbd_password=?, inq_security_yn=? "
+				+ "WHERE bbd_seq=? AND ans_seq=?",
+				board.getBbd_title(), board.getBbd_content(), board.getReg_writer(), board.getBbd_password(), board.getInq_security_yn(),
+				board.getBbd_seq(), board.getAns_seq());
+		return board;
 	}
 
 	@Override
@@ -47,7 +52,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
 				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
 				+ "       FROM bbd.t_bbd a WHERE a.ans_seq = 0 \r\n"
-				+ "       ORDER BY a.bbd_seq desc LIMIT 10", boardListMapper());
+				+ "       ORDER BY a.bbd_seq desc", boardListMapper());
 	}
 	
 	public int getTotalBoards() {

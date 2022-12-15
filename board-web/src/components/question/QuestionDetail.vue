@@ -34,7 +34,8 @@
 
             <div class="flex justify-end pt-7">
             
-                <editQuestion/>
+                <editQuestion
+                    v-bind:defaultQuestion="question"/>
                 <div class="flex justify-end pt-7 ml-3">
                     <button
                         @click="deleteBoard()"
@@ -128,8 +129,8 @@ import editQuestion from './EditQuestion.vue';
 export default {
     name: "questionDetail",
     components: {
-    editQuestion,
-},
+        editQuestion,
+    },
     
     data() {
         return {
@@ -154,9 +155,15 @@ export default {
             
             try{
                 if(confirm('정말로 삭제하시겠습니까?')){
-                    await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
-                    alert('성공적으로 삭제되었습니다.');
-                    this.$router.push({name: 'boardList'});
+                     const input = prompt('글을 보시려면 비밀번호를 입력하세요.', '4자리 숫자');
+                    if(input === this.question.password){
+                        console.log(input)
+                        await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
+                        alert('성공적으로 삭제되었습니다.');
+                        this.$router.push({name: 'boardList'});
+                    } else if(input != this.question.password){
+                        alert('비밀번호가 틀렸습니다!');
+                    }
                 }
                 
             }catch(error){

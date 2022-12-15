@@ -132,7 +132,7 @@ export default {
 
     methods: {
         itemsCheck(){
-          if(this.board.reg_writer == '' || this.board.bbd_title == '' || 
+       if(this.board.reg_writer == '' || this.board.bbd_title == '' || 
           this.board.bbd_content == '' || this.board.bbd_password == ''){
                 alert("항목을 다 입력했는지 확인해주세요!")
           } else{
@@ -142,7 +142,7 @@ export default {
               this.board.inq_security_yn = 'n';
             }
             this.registerBoard();
-          }
+          }   
             
         },
 
@@ -150,9 +150,7 @@ export default {
           try {
             await BoardApi.boardCreate(this.board);
             alert("게시글 등록이 완료되었습니다!");
-            // this.board = {};
-            // this.open = false;
-            this.$router.go;
+            this.$router.go();
 
           } catch (error) {
             console.log(error);
