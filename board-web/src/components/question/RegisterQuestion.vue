@@ -119,21 +119,15 @@ export default {
             open: false,
 
             board:{
-                ans_seq: 0,
-                reg_writer: '',
-                bbd_title: '',
-                bbd_content: '',
-                bbd_attach_1: '',
-                bbd_password: '',
-                inq_security_yn: '',
+              ans_seq: 0,
             }
         }
     },
 
     methods: {
         itemsCheck(){
-       if(this.board.reg_writer == '' || this.board.bbd_title == '' || 
-          this.board.bbd_content == '' || this.board.bbd_password == ''){
+       if(this.board.reg_writer == null || this.board.bbd_title == null || 
+          this.board.bbd_content == null || this.board.bbd_password == null){
                 alert("항목을 다 입력했는지 확인해주세요!")
           } else{
             if(this.board.inq_security_yn == true){
@@ -141,14 +135,14 @@ export default {
             } else{
               this.board.inq_security_yn = 'n';
             }
-            this.registerBoard();
+            this.registerQuestion();
           }   
             
         },
 
-        async registerBoard(){
+        async registerQuestion(){
           try {
-            await BoardApi.boardCreate(this.board);
+            await BoardApi.questionCreate(this.board);
             alert("게시글 등록이 완료되었습니다!");
             this.$router.go();
 

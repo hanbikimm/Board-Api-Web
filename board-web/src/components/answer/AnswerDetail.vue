@@ -4,9 +4,8 @@
         <div class="px-6 py-4 text-left modal-content">
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
-                
-                <p class="text-2xl font-bold mt-2">({{ this.question.id }}) {{ this.question.title }}의 답변</p>
-                <div class="z-50 cursor-pointer modal-close" @click="goToBoardList()">
+                <p class="text-2xl font-bold mt-2">({{ this.answer.ans_seq }}) {{ this.answer.bbd_title }}</p>
+                <div class="z-50 cursor-pointer modal-close" @click="goToQuestion()">
                     <svg
                         class="text-black fill-current"
                         xmlns="http://www.w3.org/2000/svg"
@@ -18,27 +17,31 @@
                 </div>
             </div>
 
+             <!--Body-->
             <div>
-                <p class="text-xl font-bold mt-5">{{ this.answer.title }}</p>
-                <hr class="mt-2"/>
-            </div>
-
-            <!--Body-->
-            <div>
-                <p class="text-base font-bold mt-2">{{ this.answer.writer }}</p>
+                <p class="text-lg font-bold">{{ this.answer.reg_writer }}</p>
                 <p class="text-sm">
-                    {{ this.answer.date }} &nbsp; 조회 {{ this.answer.views }}
+                    {{ this.answer.reg_datetime }} &nbsp; 조회 {{ this.answer.total_views }}
                 </p>
-                <hr class="mt-2"/>
+                <hr class="mt-4"/>
             </div>
             <div>
-                <p class="mt-4">{{ this.answer.contents }}</p>
-                <p>{{ this.answer.files }}</p>
+                <p class="mt-4">{{ this.answer.bbd_content }}</p>
+                <p>{{ this.answer.bbd_attach_1 }}</p>
+                <hr class="mt-4"/>
             </div>
 
-            <!--Footer-->
             <div class="flex justify-end pt-7">
-                <editAnswer/>
+            
+                <editBoard
+                    v-bind:defaultBoard="answer"/>
+                <div class="flex justify-end pt-7 ml-3">
+                    <button
+                        @click="deleteBoard()"
+                        class="block text-white bg-blue-700 hover:bg-blue-800 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm px-5 py-2.5 text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
+                        삭제
+                    </button>
+                </div>
             </div>
         </div>
     </div>
@@ -47,40 +50,63 @@
 
 </template>
 <script>
-import editAnswer from '@/components/answer/EditAnswer.vue';
+import editBoard from '../board/EditBoard.vue';
+import BoardApi from '@/api/BoardApi';
 
 export default {
     name: "answerDetail",
     components: {
-    editAnswer,
+    editBoard,
 },
     
     data() {
         return {
             open: false,
-            question: {
-                id: '2023', 
-                writer: '김한비', 
-                title: '어려운 질문', 
-            },
-            answer: {
-                writer: '민윤기',
-                date: '2022-11-31 10:15:10',
-                views: '1',
-                title: '별로 안어렵네요',
-                contents: '전문가에게 문의해서 도움을 받아보세요~~',
-                files: '답변 사진.jpg'
-
-            }
+            answer: {}
         };
     },
     methods: {
-        goToBoardList(){
+        goToQuestion(){
             this.$router.push({
-            name: 'boardList',
+            name: 'questionDetail',
+            params:{
+                bbdId: this.answer.bbd_seq,
+                ansId: 0
+            }
             })
         },
+
+        async getAnswerDetail(){
+            try{
+                const data = await BoardApi.boardDetail(this.$route.params.bbdId, this.$route.params.ansId);
+                this.answer = data;
+            }catch(error){
+                console.log(error);
+            }
+        },
+
+        async deleteBoard(){
+            try{
+                if(confirm('정말로 삭제하시겠습니까?')){
+                     const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
+                    if(input === this.answer.bbd_password){
+                        await BoardApi.boardDelete(this.answer.bbd_seq, this.answer.ans_seq);
+                        alert('성공적으로 삭제되었습니다.');
+                        this.goToQuestion();
+                    } else if(input != this.answer.bbd_password){
+                        alert('비밀번호가 틀렸습니다!');
+                    }
+                }
+                
+            }catch(error){
+                console.log(error);
+            }
+        },
     },
+
+    mounted(){
+        this.getAnswerDetail();
+    }
     
 }
 </script>

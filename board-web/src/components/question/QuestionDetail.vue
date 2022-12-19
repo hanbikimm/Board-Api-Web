@@ -34,8 +34,8 @@
 
             <div class="flex justify-end pt-7">
             
-                <editQuestion
-                    v-bind:defaultQuestion="question"/>
+                <editBoard
+                    v-bind:defaultBoard="question"/>
                 <div class="flex justify-end pt-7 ml-3">
                     <button
                         @click="deleteBoard()"
@@ -61,7 +61,7 @@
                         <input
                             class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                             type="text"
-                            v-model="answer.writer"/>
+                            v-model="board.reg_writer"/>
 
                         <label class="text-gray-700 ml-2">
                             제목
@@ -69,13 +69,13 @@
                         <input
                             class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                             type="text"
-                            v-model="answer.title"/>
+                            v-model="board.bbd_title"/>
 
                         <label class="text-gray-700 ml-2">
                             내용
                         </label>
                         <textarea id="message" rows="5"
-                            v-model="answer.contents"
+                            v-model="board.bbd_content"
                             class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
 
                         <label class="text-gray-700 ml-2">
@@ -84,7 +84,7 @@
                         <input
                             class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                             type="text"
-                            v-model="answer.files"/>
+                            v-model="board.bbd_attach_1"/>
 
                         <label class="text-gray-700 ml-2">
                             비밀번호 (4자리 숫자)
@@ -92,11 +92,11 @@
                         <input
                             class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                             type="password"
-                            v-model="answer.password"/>
+                            v-model="board.bbd_password"/>
 
                         <input class="ml-2 border border-gray-300"
                             type="checkbox"
-                            v-model="answer.checked"/>
+                            v-model="board.inq_security_yn"/>
                         <label class="text-gray-700 ml-2">
                             조회 보안
                         </label>
@@ -118,34 +118,54 @@
                     </button>
                 </div>
             </div>
+
+            <div>
+                <answerList
+                    v-for="answer in this.answers" :key="answer.ans_seq"
+                    :answer="answer"
+                    @click="goToAnswerDetail(answer.bbd_seq, answer.ans_seq)"/>
+            </div>
+            
         </div>
     </div>
 </div>
 </template>
 <script>
 import BoardApi from '@/api/BoardApi';
-import editQuestion from './EditQuestion.vue';
+import answerList from '@/components/answer/AnswerList.vue';
+import editBoard from '../board/EditBoard.vue';
 
 export default {
     name: "questionDetail",
     components: {
-        editQuestion,
-    },
+    editBoard,
+    answerList
+},
     
     data() {
         return {
             show: false,
             question: {},
-            answer:[]
+            answers:[],
+            board:{}
             
         };
     },
 
     methods: {
-        async getBoardDetail(){
+        async getQuestionDetail(){
             try{
-                const data = await BoardApi.boardDetail(this.$route.params.id);
+                const data = await BoardApi.boardDetail(this.$route.params.bbdId, this.$route.params.ansId);
                 this.question = data;
+            }catch(error){
+                console.log(error);
+            }
+        },
+
+        async getAnswerList(){
+            try{
+                const data = await BoardApi.answerList(this.$route.params.bbdId);
+                this.answers = data;
             }catch(error){
                 console.log(error);
             }
@@ -156,32 +176,60 @@ export default {
             try{
                 if(confirm('정말로 삭제하시겠습니까?')){
                      const input = prompt('글을 보시려면 비밀번호를 입력하세요.', '4자리 숫자');
-                    if(input === this.question.password){
-                        console.log(input)
+                    if(input === this.question.bbd_password){
                         await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
                         alert('성공적으로 삭제되었습니다.');
                         this.$router.push({name: 'boardList'});
-                    } else if(input != this.question.password){
+                    } else if(input != this.question.bbd_password){
                         alert('비밀번호가 틀렸습니다!');
                     }
                 }
                 
             }catch(error){
-                console.log(error)
+                console.log(error);
             }
             
+        },
+
+        goToAnswerDetail(bbdId, ansId){
+            this.$router.push({
+            name: 'answerDetail',
+            params: { bbdId: bbdId,
+                      ansId: ansId }
+            })
         },
 
         goToBoardList(){
             this.$router.push({
             name: 'boardList',
-            })
+            });
         },
 
         itemsCheck(){
-            alert("답변 등록이 완료되었습니다.");
-            this.$router.go;
-            this.formShow();
+        if(this.board.reg_writer == null || this.board.bbd_title == null || 
+          this.board.bbd_content == null || this.board.bbd_password == null){
+            alert("항목을 다 입력했는지 확인해주세요!")
+        } else{
+            if(this.board.inq_security_yn == true){
+            this.board.inq_security_yn = 'y';
+            } else{
+            this.board.inq_security_yn = 'n';
+            }
+            this.registerAnswer();
+            }   
+            
+        },
+
+        async registerAnswer(){
+          try {
+            this.board.bbd_seq = this.$route.params.bbdId;
+            await BoardApi.answerCreate(this.board);
+            alert("답변 등록이 완료되었습니다!");
+            this.$router.go();
+          } catch (error) {
+            console.log(error);
+          }
+          
         },
 
         formShow(){
@@ -190,7 +238,8 @@ export default {
     },
 
     mounted(){
-        this.getBoardDetail();
+        this.getQuestionDetail();
+        this.getAnswerList();
     }
     
 }

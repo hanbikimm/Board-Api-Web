@@ -44,7 +44,7 @@
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
                         :disabled="true"
-                        v-model="question.id"/>
+                        v-model="board.id"/>
                 </div>
                 
                 <div>
@@ -55,7 +55,7 @@
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
                         :disabled="true"
-                        v-model="question.id"/>
+                        v-model="board.id"/>
                 </div>
 
                 <div>
@@ -66,7 +66,7 @@
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
                         :disabled="true"
-                        v-model="question.views"/>
+                        v-model="board.views"/>
                 </div>
             </div> -->
 
@@ -78,7 +78,7 @@
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
-                        v-model="question.bbd_title"/>
+                        v-model="board.bbd_title"/>
                 </div>
                 
                 <div class="mt-3">
@@ -86,7 +86,7 @@
                         내용
                     </label>
                     <textarea id="message" rows="10"
-                    v-model="question.bbd_content"
+                    v-model="board.bbd_content"
                     class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
                 </div>
                 
@@ -97,7 +97,7 @@
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
-                        v-model="question.bbd_attach_1"/>
+                        v-model="board.bbd_attach_1"/>
                 </div>
             </div>
             <div class="my-3 grid grid-cols-1 gap-6 sm:grid-cols-2">
@@ -108,7 +108,7 @@
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="text"
-                        v-model="question.reg_writer"/>
+                        v-model="board.reg_writer"/>
                 </div>
                 
                 <div>
@@ -118,13 +118,13 @@
                     <input
                         class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
                         type="password"
-                        v-model="question.bbd_password"/>
+                        v-model="board.bbd_password"/>
                 </div>
                 <div>
                     <input 
                         class="ml-2 border border-gray-300"
                         type="checkbox"
-                        v-model="question.inq_security_yn"/>
+                        v-model="board.inq_security_yn"/>
                     <label class="text-gray-700 ml-2">
                         조회 보안
                     </label>
@@ -155,36 +155,36 @@ import BoardApi from '@/api/BoardApi';
 
 
 export default {
-    name: "editQuestion",
-    props:['defaultQuestion'],
+    name: "editBoard",
+    props:['defaultBoard'],
     components: { 
     },
     data() {
         return {
             open: false,
-            question: { }
+            board: { }
         };
     },
     methods: {
         openEditor() {
             this.open = true;
-            this.question = {...this.defaultQuestion};
-            if (this.question.inq_security_yn == 'y') {
-                this.question.inq_security_yn = true;
+            this.board = {...this.defaultBoard};
+            if (this.board.inq_security_yn == 'y') {
+                this.board.inq_security_yn = true;
             } else {
-                this.question.inq_security_yn = false;
+                this.board.inq_security_yn = false;
             }
         },
 
         itemsCheck() {
-            if(this.question.reg_writer == '' || this.question.bbd_title == '' || 
-          this.question.bbd_content == '' || this.question.bbd_password == ''){
+            if(this.board.reg_writer == '' || this.board.bbd_title == '' || 
+          this.board.bbd_content == '' || this.board.bbd_password == ''){
                 alert("항목을 다 입력했는지 확인해주세요!")
           } else{
-            if(this.question.inq_security_yn == true){
-              this.question.inq_security_yn = 'y';
+            if(this.board.inq_security_yn == true){
+              this.board.inq_security_yn = 'y';
             } else{
-              this.question.inq_security_yn = 'n';
+              this.board.inq_security_yn = 'n';
             }
             this.modifyBoard();
           }
@@ -192,7 +192,7 @@ export default {
 
         async modifyBoard(){
             try {
-                await BoardApi.boardEdit(this.question.bbd_seq, this.question);
+                await BoardApi.boardEdit(this.board.bbd_seq, this.board);
                 alert('게시글 수정이 완료되었습니다.');
                 this.$router.go();
             } catch (error) {

@@ -29,35 +29,51 @@ public class BoardController {
 		this.boardService = boardService;
 	 }
 	
-	// 게시글 목록
-	@GetMapping(value="/boards")
+	// 질문 목록
+	@GetMapping(value="/questions")
 	@ResponseBody
-	public List<Board> boardList() {
-		return boardService.getBoardList();
+	public List<Board> questionList() {
+		return boardService.getQuestionList();
 	}
 	
-	// 게시글 등록
-	@PostMapping(value="/boards")
-	public Board registerBoard(@RequestBody Board board) {
-		return boardService.createBoard(board);
+	// 댓글 목록
+	@GetMapping(value="/answers/{id}")
+	public List<Board> answerList(@PathVariable Long id){
+		return boardService.getAnswerList(id);
+	}
+	
+	// 질문 등록
+	@PostMapping(value="/question")
+	public Board registeQuestion(@RequestBody Board board) {
+		return boardService.createQuestion(board);
+	}
+	
+	// 답변 등록
+	@PostMapping(value="/answer")
+	public Board registerAnswer(@RequestBody Board board) {
+		return boardService.createAnswer(board);
+	}
+	
+	// 게시글 상세
+	@GetMapping(value="board/{bbdId}")
+	public Optional<Board> boardDetail(@PathVariable("bbdId") Long bbdId, Long ansId) {
+		return boardService.getBoardDetail(bbdId, ansId);
 	}
 	
 	// 게시글 수정
-	@PutMapping(value = "/board/{id}")
+	@PutMapping(value="/board/{id}")
 	public Board ModifyBoard(@PathVariable Long id, @RequestBody Board board) {
 		return boardService.editBoard(board);
 	}
 	
 	// 게시글 삭제
-	@DeleteMapping(value = "board/{bbdId}")
+	@DeleteMapping(value="board/{bbdId}")
 	public String removeBoard(@PathVariable("bbdId") Long bbdId, Long ansId) {
 		return boardService.eraseBoard(bbdId, ansId);
 	}
 	
-	// 게시글 상세
-	@GetMapping(value = "board/{id}")
-	public Optional<Board> boardDetail(@PathVariable Long id) {
-		return boardService.getBoardDetail(id);
-	}
+	
+	
+	
 
 }

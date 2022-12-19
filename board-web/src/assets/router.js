@@ -17,11 +17,11 @@ export default createRouter({
             component: () => import('@/components/board/BoardList.vue'),
         },
         {
-            path: '/question/:id', name: 'questionDetail', 
+            path: '/question/:bbdId/:ansId', name: 'questionDetail', 
             component: () => import('@/components/question/QuestionDetail.vue'),
         },
         {
-            path: '/answer', name: 'answerDetail', 
+            path: '/answer/:bbdId/:ansId', name: 'answerDetail', 
             component: () => import('@/components/answer/AnswerDetail.vue'),
         },
         {

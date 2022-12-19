@@ -20,9 +20,51 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 	
 	@Override
-	public Board postBoard(Board board) {
+	public List<Board> getQuestions() {
+		return jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
+				+ "             (SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
+				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
+				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
+				+ "       FROM bbd.t_bbd a WHERE a.ans_seq = 0 \r\n"
+				+ "       ORDER BY a.bbd_seq desc", boardListMapper());
+	}
+	
+	@Override
+	public List<Board> getAnswers(Long id) {
+		return jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
+				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
+				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
+				+ "       FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq > 0 \r\n"
+				+ "       ORDER BY a.ans_seq asc", answerListMapper(), id);
+	}
+
+	
+//	public int getTotalBoards() {
+//		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
+//		return count;
+//	}
+
+	@Override
+	public Optional<Board> getBoard(Long bbdId, Long ansId) {
+		List<Board> result = jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, "
+				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count, "
+				+ "a.reg_writer, a.reg_datetime, a.bbd_content, a.bbd_attach_1, a.bbd_password, "
+				+ "IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views "
+				+ "FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq=?", boardMapper(), bbdId, ansId);
+		return result.stream().findAny();
+	}
+	
+	@Override
+	public Board postQuestion(Board board) {
 		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, ?, null, null, null, null, ?, ?)";
 		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_attach_1(), board.getBbd_password(), board.getInq_security_yn());
+		return board;
+	}
+	
+	@Override
+	public Board postAnswer(Board board) {
+		String sql = "INSERT INTO t_bbd VALUES (?, (select IFNULL(MAX(ans_seq) + 1, 1) FROM t_bbd b WHERE b.bbd_seq=?), now(), ?, ?, ?, ?, null, null, null, null, ?, ?)";
+		jdbcTemplate.update(sql, board.getBbd_seq(), board.getBbd_seq(),  board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_attach_1(), board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
 	
@@ -45,30 +87,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 		return board;
 	}
 
-	@Override
-	public List<Board> getBoards() {
-		return jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
-				+ "             (SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
-				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
-				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
-				+ "       FROM bbd.t_bbd a WHERE a.ans_seq = 0 \r\n"
-				+ "       ORDER BY a.bbd_seq desc", boardListMapper());
-	}
-	
-	public int getTotalBoards() {
-		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
-		return count;
-	}
 
-	@Override
-	public Optional<Board> getBoard(Long id) {
-		List<Board> result = jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, "
-				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count, "
-				+ "a.reg_writer, a.reg_datetime, a.bbd_content, a.bbd_attach_1, a.bbd_password, "
-				+ "IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views "
-				+ "FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq = 0", boardMapper(), id);
-		return result.stream().findAny();
-	}
 	
 	private RowMapper<Board> boardListMapper(){
 		return (rs, rowNum) -> {
@@ -104,7 +123,26 @@ public class BoardRepositoryImpl implements BoardRepository {
 			return board;
 		};
 	}
+	
+	private RowMapper<Board> answerListMapper(){
+		return (rs, rowNum) -> {
+			Board board = new Board();
+			board.setBbd_seq(rs.getLong("bbd_seq"));
+			board.setAns_seq(rs.getLong("ans_seq"));
+			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_datetime(rs.getString("reg_datetime"));
+			board.setBbd_title(rs.getString("bbd_title"));
+			board.setBbd_password(rs.getString("bbd_password"));
+			board.setInq_security_yn(rs.getString("inq_security_yn"));
+			board.setTotal_views(rs.getLong("total_views"));
+			
+			return board;
+		};
+	}
 
+
+
+	
 	
 	
 }

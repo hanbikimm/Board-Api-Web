@@ -18,7 +18,7 @@
             :columnDefs="columnDefs"
             :rowData="rowData"
             :rowSelection="rowSelection"
-            @selection-changed="goToQuestionDetail"
+            @selection-changed="goToQuestionDetail()"
             :defaultColDef="defaultColDef"
             @grid-ready="onGridReady"
             :pagination="true"
@@ -31,15 +31,6 @@
         <registerQuestion/> <SecretBoard/>
     </div>
 
-    <div>
-        <boardPagination
-        :paging="paging"
-        v-on:prevPage="prevPage"
-        v-on:nextPage="nextPage"
-        v-on:firstPage="firstPage"
-        v-on:lastPage="lastPage"
-        v-on:changeNowPage="changeNowPage"/>
-    </div>
 </div>
 </template>
 
@@ -48,7 +39,6 @@ import registerQuestion from "@/components/question/RegisterQuestion.vue";
 import { AgGridVue } from "ag-grid-vue3";
 import "ag-grid-community/dist/styles/ag-grid.css";
 import "ag-grid-community/dist/styles/ag-theme-alpine.css";
-import boardPagination from "@/components/board/BoardPagination.vue";
 import questionDetail from "@/components/question/QuestionDetail.vue";
 import SecretBoard from "@/components/modal/SecretBoard.vue";
 import BoardApi from "@/api/BoardApi";
@@ -60,7 +50,6 @@ export default {
         AgGridVue,
         registerQuestion,
         questionDetail,
-        boardPagination,
         SecretBoard
     },
 
@@ -97,9 +86,9 @@ export default {
             this.gridColumnApi = params.columnApi;
         },
 
-        async getBoardList(){
+        async getQuestionList(){
             try{
-                const results = await BoardApi.boardList();
+                const results = await BoardApi.questionList();
                 this.rowData = results;
                 // this.total_boards = results.
 
@@ -120,55 +109,14 @@ export default {
 
         goToQuestionDetail(){
             const row = this.gridApi.getSelectedRows();
-            const id = row[0].bbd_seq;
+            const bbdId = row[0].bbd_seq;
+            const ansId = row[0].ans_seq;
             this.$router.push({
             name: 'questionDetail',
-            params: { id: id }
+            params: { bbdId: bbdId, 
+                      ansId: ansId }
             })
         },
-
-        
-
-        // 페이징
-        prevPage(){
-            if(this.paging.nowPage > 1){
-                this.paging.nowPage -= 1;
-                this.getBoardList(this.paging.nowPage);
-            }else if(this.paging.nowPage == 1){
-                alert('첫번째 페이지입니다.');
-            }
-        },
-        nextPage(){
-            if(this.paging.lastPage > this.paging.nowPage){
-                this.paging.nowPage += 1;
-                this.getBoardList(this.paging.nowPage);
-            }else if(this.paging.lastPage == this.paging.nowPage){
-                alert('마지막 페이지입니다.');
-            }
-        },
-        firstPage(){
-            if(this.paging.nowPage != 1){
-                this.paging.nowPage = 1;
-                this.getBoardList(this.paging.nowPage);
-            }else if(this.paging.nowPage == 1){
-                alert('첫번째 페이지입니다.');
-            }
-        },
-        lastPage(){
-            if(this.paging.nowPage != this.paging.lastPage){
-                this.paging.nowPage = this.paging.lastPage;
-                this.getBoardList(this.paging.nowPage);
-            }else if(this.paging.lastPage == this.paging.nowPage){
-                alert('마지막 페이지입니다.');
-            }
-        },
-        changeNowPage(page){
-            if(page !== this.paging.nowPage){
-                this.paging.nowPage = page;
-                this.getBoardList(this.paging.nowPage);
-            }
-        }
-
 
     },
 
@@ -183,7 +131,7 @@ export default {
             { headerName: "조회수", field: "total_views", sortable: true, filter: true },
         ];
 
-        this.getBoardList();
+        this.getQuestionList();
         this.rowSelection = 'single';
     },
 };

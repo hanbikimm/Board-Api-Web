@@ -14,11 +14,20 @@ public class BoardService {
 		this.boardRepository = boardRepository;
 	}
 	
-	public List<Board> getBoardList(){
-		return boardRepository.getBoards();
+	public List<Board> getQuestionList(){
+		return boardRepository.getQuestions();
 	}
 	
-	public Board createBoard(Board board) {
+	public List<Board> getAnswerList(Long id){
+		return boardRepository.getAnswers(id);
+	}
+	
+	public Optional<Board> getBoardDetail(Long bbdId, Long ansId) {
+		return boardRepository.getBoard(bbdId, ansId);
+	}
+	
+	
+	public Board createQuestion(Board board) {
 		Board boardForm = new Board();
 		boardForm.setReg_writer(board.getReg_writer());
 		boardForm.setBbd_title(board.getBbd_title());
@@ -26,7 +35,19 @@ public class BoardService {
 		boardForm.setBbd_attach_1(board.getBbd_attach_1());
 		boardForm.setBbd_password(board.getBbd_password());
 		boardForm.setInq_security_yn(board.getInq_security_yn());
-		return boardRepository.postBoard(boardForm);
+		return boardRepository.postQuestion(boardForm);
+	}
+	
+	public Board createAnswer(Board board) {
+		Board boardForm = new Board();
+		boardForm.setBbd_seq(board.getBbd_seq());
+		boardForm.setReg_writer(board.getReg_writer());
+		boardForm.setBbd_title(board.getBbd_title());
+		boardForm.setBbd_content(board.getBbd_content());
+		boardForm.setBbd_attach_1(board.getBbd_attach_1());
+		boardForm.setBbd_password(board.getBbd_password());
+		boardForm.setInq_security_yn(board.getInq_security_yn());
+		return boardRepository.postAnswer(boardForm);
 	}
 	
 	public String eraseBoard(Long bbdId, Long ansId) {
@@ -37,7 +58,5 @@ public class BoardService {
 		return boardRepository.updateBoard(board);
 	}
 	
-	public Optional<Board> getBoardDetail(Long id) {
-		return boardRepository.getBoard(id);
-	}
+	
 }

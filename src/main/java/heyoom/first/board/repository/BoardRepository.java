@@ -7,10 +7,13 @@ import heyoom.first.board.domain.Board;
 
 public interface BoardRepository {
 	
-	Board postBoard(Board board);
+	List<Board> getQuestions();
+	List<Board> getAnswers(Long id);
+	Optional<Board> getBoard(Long bbdId, Long ansId);
+	Board postQuestion(Board board);
+	Board postAnswer(Board board);
 	String deleteBoard(Long bbdId, Long ansId);
 	Board updateBoard(Board board);
-	List<Board> getBoards();
-	Optional<Board> getBoard(Long id);
+	
 
 }
