@@ -5,6 +5,11 @@ const instance = createSchedulerInstance();
 class SchedulerApi{
     URL = '/bbd'
 
+    totalBoard(){
+        return instance.get(this.URL + '/total')
+                .then((response)=>response.data)
+    }
+
     questionList(){
         return instance.get(this.URL + '/questions')
                 .then((response)=>response.data);

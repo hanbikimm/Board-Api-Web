@@ -23,7 +23,12 @@ public class BoardService {
 	}
 	
 	public Optional<Board> getBoardDetail(Long bbdId, Long ansId) {
+		updateDayViews(bbdId, ansId);
 		return boardRepository.getBoard(bbdId, ansId);
+	}
+	
+	public int getTotal() {
+		return boardRepository.getTotalBoards();
 	}
 	
 	
@@ -56,6 +61,15 @@ public class BoardService {
 	
 	public Board editBoard(Board board) {
 		return boardRepository.updateBoard(board);
+	}
+	
+	public String updateDayViews(Long bbdId, Long ansId) {
+		int count = boardRepository.checkView(bbdId, ansId);
+		return boardRepository.plusView(bbdId, ansId, count);
+	}
+	
+	public String updateDayWrites(Long bbdId, Long ansId) {
+		return boardRepository.plusWrite(bbdId, ansId);
 	}
 	
 	

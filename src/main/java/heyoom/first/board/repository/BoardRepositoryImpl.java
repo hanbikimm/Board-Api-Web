@@ -38,11 +38,11 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "       ORDER BY a.ans_seq asc", answerListMapper(), id);
 	}
 
-	
-//	public int getTotalBoards() {
-//		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
-//		return count;
-//	}
+	@Override
+	public int getTotalBoards() {
+		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
+		return count;
+	}
 
 	@Override
 	public Optional<Board> getBoard(Long bbdId, Long ansId) {
@@ -85,6 +85,43 @@ public class BoardRepositoryImpl implements BoardRepository {
 				board.getBbd_title(), board.getBbd_content(), board.getReg_writer(), board.getBbd_password(), board.getInq_security_yn(),
 				board.getBbd_seq(), board.getAns_seq());
 		return board;
+	}
+	
+	@Override
+	public String checkAnswersForDelete() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+
+	@Override
+	public String checkAnswersForCount() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public int checkView(Long bbdId, Long ansId) {
+		return jdbcTemplate.queryForObject("SELECT count(*) from t_inq_cnt WHERE inq_date=DATE_FORMAT(NOW(), '%Y-%m-%d')\r\n"
+				+ "             AND bbd_seq=? AND ans_seq=? \r\n", Integer.class, bbdId, ansId);
+	}
+
+	@Override
+	public String plusView(Long bbdId, Long ansId, int count) {
+		if (count == 0) {
+			jdbcTemplate.update("INSERT INTO t_inq_cnt VALUES(DATE_FORMAT(NOW(), '%Y-%m-%d'), ?, ?, 1)", bbdId, ansId);
+		} else {
+			jdbcTemplate.update("UPDATE t_inq_cnt SET day_views=day_views+1 \r\n"
+					+ "		WHERE inq_date=DATE_FORMAT(NOW(), '%Y-%m-%d') AND bbd_seq=? AND ans_seq=?", bbdId, ansId);
+		}
+		return "day view + 1";
+	}
+
+
+	@Override
+	public String plusWrite(Long bbdId, Long ansId) {
+		jdbcTemplate.update("INSERT INTO t_ans_cnt VALUES(DATE_FORMAT(NOW(), '%Y-%m-%d'), ?, ?, 1)", bbdId, ansId);
+		return "day write + 1";
 	}
 
 
@@ -139,6 +176,9 @@ public class BoardRepositoryImpl implements BoardRepository {
 			return board;
 		};
 	}
+
+
+	
 
 
 

@@ -29,6 +29,12 @@ public class BoardController {
 		this.boardService = boardService;
 	 }
 	
+	// 총 게시글 갯수
+	@GetMapping(value="/total")
+	public int totalBoard() {
+		return boardService.getTotal();
+	}
+	
 	// 질문 목록
 	@GetMapping(value="/questions")
 	@ResponseBody
@@ -71,6 +77,9 @@ public class BoardController {
 	public String removeBoard(@PathVariable("bbdId") Long bbdId, Long ansId) {
 		return boardService.eraseBoard(bbdId, ansId);
 	}
+	
+	// 조회수
+//	@PutMapping(value="/board/")
 	
 	
 	

@@ -25,8 +25,8 @@
                 </p>
                 <hr class="mt-4"/>
             </div>
-            <div>
-                <p class="mt-4">{{ this.answer.bbd_content }}</p>
+            <div >
+                <p class="mt-4 content">{{ this.answer.bbd_content }}</p>
                 <p>{{ this.answer.bbd_attach_1 }}</p>
                 <hr class="mt-4"/>
             </div>
@@ -65,15 +65,17 @@ export default {
             answer: {}
         };
     },
+
     methods: {
         goToQuestion(){
-            this.$router.push({
-            name: 'questionDetail',
-            params:{
-                bbdId: this.answer.bbd_seq,
-                ansId: 0
-            }
-            })
+            // this.$router.push({
+            // name: 'questionDetail',
+            // params:{
+            //     bbdId: this.answer.bbd_seq,
+            //     ansId: 0
+            // }
+            // })
+            this.$router.go(-1);
         },
 
         async getAnswerDetail(){
@@ -111,4 +113,7 @@ export default {
 }
 </script>
 <style>
+.content {
+  white-space: pre-line
+}
 </style>

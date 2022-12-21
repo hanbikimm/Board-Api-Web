@@ -27,7 +27,7 @@
                 <hr class="mt-4"/>
             </div>
             <div>
-                <p class="mt-4">{{ this.question.bbd_content }}</p>
+                <p class="mt-4 content">{{ this.question.bbd_content }}</p>
                 <p>{{ this.question.bbd_attach_1 }}</p>
                 <hr class="mt-4"/>
             </div>
@@ -152,6 +152,12 @@ export default {
         };
     },
 
+    computed:{
+        content(){
+            return this.question.bbd_content.split('\n').join('<br>');
+        }
+    },
+
     methods: {
         async getQuestionDetail(){
             try{
@@ -175,7 +181,7 @@ export default {
             
             try{
                 if(confirm('정말로 삭제하시겠습니까?')){
-                     const input = prompt('글을 보시려면 비밀번호를 입력하세요.', '4자리 숫자');
+                     const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
                     if(input === this.question.bbd_password){
                         await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
                         alert('성공적으로 삭제되었습니다.');
@@ -245,4 +251,7 @@ export default {
 }
 </script>
 <style>
+.content {
+  white-space: pre-line
+}
 </style>

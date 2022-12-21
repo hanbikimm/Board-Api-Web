@@ -6,8 +6,8 @@
         @click="goToCurrentStatus()">
             > 운영 현황판 가기
         </p>
-        <p class="text-2xl font-bold my-5">다목적 게시판</p>
-        <p>> 총 2022 건의 게시물</p>
+        <p class="text-2xl font-bold mt-5 mb-1">다목적 게시판</p>
+        <p>: 총 {{ total }} 건의 게시물</p>
     </div>
     
     <div class="m-3 w-full grid place-items-center">
@@ -28,7 +28,7 @@
     </div>
 
     <div class="flex justify-end mt-9">
-        <registerQuestion/> <SecretBoard/>
+        <registerQuestion/>
     </div>
 
 </div>
@@ -42,6 +42,8 @@ import "ag-grid-community/dist/styles/ag-theme-alpine.css";
 import questionDetail from "@/components/question/QuestionDetail.vue";
 import SecretBoard from "@/components/modal/SecretBoard.vue";
 import BoardApi from "@/api/BoardApi";
+import Validation from "@/assets/Validation";
+import LockSvg from "@/assets/LockSvg.vue"
 
 export default {
     name: "boardList",
@@ -50,7 +52,8 @@ export default {
         AgGridVue,
         registerQuestion,
         questionDetail,
-        SecretBoard
+        SecretBoard,
+        LockSvg
     },
 
     data() {
@@ -73,7 +76,7 @@ export default {
             rowSelection: null,
             paginationPageSize: 10,
             gridOptions: {},
-            total_boards: '',
+            total: '',
 
             paging: {},
 
@@ -86,11 +89,20 @@ export default {
             this.gridColumnApi = params.columnApi;
         },
 
+        lockFormatter(params){
+            if (params.value == 'y') {
+                return '🔒'
+            } else {
+                return ''
+            }
+        },
+
         async getQuestionList(){
             try{
                 const results = await BoardApi.questionList();
+                const total_board = await BoardApi.totalBoard();
                 this.rowData = results;
-                // this.total_boards = results.
+                this.total = Validation.addComma(total_board);
 
             }catch(error){
                 console.log(error);
@@ -98,7 +110,6 @@ export default {
         },
 
         enterSecretNum() {
-            
         },
 
         goToCurrentStatus(){
@@ -111,28 +122,48 @@ export default {
             const row = this.gridApi.getSelectedRows();
             const bbdId = row[0].bbd_seq;
             const ansId = row[0].ans_seq;
-            this.$router.push({
-            name: 'questionDetail',
-            params: { bbdId: bbdId, 
-                      ansId: ansId }
-            })
+
+            if (row[0].inq_security_yn == 'y') {
+                const input = prompt('비밀번호를 입력하세요.', '4자리 숫자')
+                if (input === row[0].bbd_password) {
+                    this.$router.push({
+                    name: 'questionDetail',
+                    params: { bbdId: bbdId, 
+                            ansId: ansId }
+                    });
+                } else if(input != row[0].bbd_password) {
+                    alert('비밀번호가 틀렸습니다!');
+                    this.getQuestionList();
+                }
+            } else {
+                this.$router.push({
+                    name: 'questionDetail',
+                    params: { bbdId: bbdId, 
+                            ansId: ansId }
+                });
+            }
+            
+            
+            
         },
 
     },
 
     beforeMount() {
         this.columnDefs = [
-            { headerName: "순번", field: "bbd_seq", sortable: true, filter: true },
-            { headerName: "보안", field: "inq_security_yn", sortable: true, filter: true },
-            { headerName: "제목", field: "bbd_title", sortable: true, filter: true },
-            { headerName: "답변 수", field: "answer_count", sortable: true, filter: true},
-            { headerName: "작성자", field: "reg_writer", sortable: true, filter: true },
-            { headerName: "작성 일시", field: "reg_datetime", sortable: true, filter: true },
-            { headerName: "조회수", field: "total_views", sortable: true, filter: true },
+            { headerName: "순번", field: "bbd_seq" },
+            { headerName: "보안", field: "inq_security_yn", valueFormatter: this.lockFormatter },
+            { headerName: "제목", field: "bbd_title"},
+            { headerName: "답변 수", field: "answer_count" },
+            { headerName: "작성자", field: "reg_writer" },
+            { headerName: "작성 일시", field: "reg_datetime" },
+            { headerName: "조회수", field: "total_views" },
         ];
 
         this.getQuestionList();
         this.rowSelection = 'single';
     },
 };
+
+
 </script>
