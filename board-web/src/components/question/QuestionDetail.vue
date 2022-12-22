@@ -121,9 +121,10 @@
 
             <div>
                 <answerList
+                    class="cursor-pointer"
                     v-for="answer in this.answers" :key="answer.ans_seq"
                     :answer="answer"
-                    @click="goToAnswerDetail(answer.bbd_seq, answer.ans_seq)"/>
+                    @click="goToAnswerDetail(answer.bbd_seq, answer.ans_seq, answer.inq_security_yn, answer.bbd_password)"/>
             </div>
             
         </div>
@@ -197,12 +198,26 @@ export default {
             
         },
 
-        goToAnswerDetail(bbdId, ansId){
-            this.$router.push({
-            name: 'answerDetail',
-            params: { bbdId: bbdId,
-                      ansId: ansId }
-            })
+        goToAnswerDetail(bbdId, ansId, security, password){
+            if (security == 'y') {
+                const input = prompt('비밀번호를 입력하세요.', '4자리 숫자')
+                if (input === password) {
+                    this.$router.push({
+                    name: 'answerDetail',
+                    params: { bbdId: bbdId, 
+                            ansId: ansId }
+                    });
+                } else if(input != password) {
+                    alert('비밀번호가 틀렸습니다!');
+                    this.getQuestionList();
+                }
+            } else {
+                this.$router.push({
+                    name: 'answerDetail',
+                    params: { bbdId: bbdId, 
+                            ansId: ansId }
+                });
+            }
         },
 
         goToBoardList(){

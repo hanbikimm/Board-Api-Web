@@ -9,6 +9,8 @@ public interface BoardRepository {
 	
 	List<Board> getQuestions();
 	List<Board> getAnswers(Long id);
+	List<Board> getBoardsOfTitle(String searchWord);
+	List<Board> getBoardsOfWriter(String searchWord);
 	Optional<Board> getBoard(Long bbdId, Long ansId);
 	int getTotalBoards();
 	Board postQuestion(Board board);
@@ -20,6 +22,7 @@ public interface BoardRepository {
 	int checkView(Long bbdId, Long ansId);
 	String plusView(Long bbdId, Long ansId, int count);
 	String plusWrite(Long bbdId, Long ansId);
+	
 	
 	
 

@@ -22,6 +22,17 @@ public class BoardService {
 		return boardRepository.getAnswers(id);
 	}
 	
+	public List<Board> getSearchList(String searchWord, Long value){
+		List<Board> results = null;
+		
+		if (value == 1) {
+			results = boardRepository.getBoardsOfTitle(searchWord);
+		} else if (value == 2){
+			results = boardRepository.getBoardsOfWriter(searchWord);
+		}
+		return results;
+	}
+	
 	public Optional<Board> getBoardDetail(Long bbdId, Long ansId) {
 		updateDayViews(bbdId, ansId);
 		return boardRepository.getBoard(bbdId, ansId);

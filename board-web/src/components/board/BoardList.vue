@@ -6,8 +6,33 @@
         @click="goToCurrentStatus()">
             > 운영 현황판 가기
         </p>
-        <p class="text-2xl font-bold mt-5 mb-1">다목적 게시판</p>
-        <p>: 총 {{ total }} 건의 게시물</p>
+        <div class="my-3 grid grid-cols-1 gap-6 sm:grid-cols-2">
+            <div>
+                <p class="text-2xl font-bold mt-5 mb-1">다목적 게시판</p>
+                <p>: 총 {{ total }} 건의 게시물</p>
+            </div>
+            <div class="flex mt-5">
+                    <div>
+                        <select v-model="search.condition"
+                            class="p-2.5 text-sm font-medium rounded-l-lg text-gray-900 focus:outline-none bg-gray-100 border border-gray-300 hover:bg-gray-200 hover:border-gray-400">
+                            <option value="1">제목(질문/답변)</option>
+                            <option value="2">작성자</option>
+                        </select>
+                    </div>
+                
+                <div class="relative w-1/2">
+                    <input type="text" placeholder="검색어를 입력하세요..." required
+                    v-model="search.word"
+                    class="block p-2.5 w-full text-sm rounded-r-lg text-gray-900 border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400" >
+                    <button @click="getSearchList()"
+                        class="absolute top-0 right-0 p-2.5 text-sm font-medium rounded-r-lg border text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
+                        <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        
     </div>
     
     <div class="m-3 w-full grid place-items-center">
@@ -23,6 +48,7 @@
             @grid-ready="onGridReady"
             :pagination="true"
             :paginationPageSize="paginationPageSize"
+            :rowClassRules="rowClassRules"
         >
         </ag-grid-vue>
     </div>
@@ -60,6 +86,7 @@ export default {
         return {
             columnDefs: [
                 { field: "bbd_seq", width: 50, suppressSizeToFit: true },
+                { field: "ans_seq", width: 50 },
                 { field: "inq_security_yn", width: 50 },
                 { field: "bbd_title", width: 200 },
                 { field: "answer_count", width: 50 },
@@ -68,6 +95,7 @@ export default {
                 { field: "total_views", width: 50 },
             ],
             rowData: null,
+            rowClassRules: null,
             defaultColDef: {
                 resizable: true,
             },
@@ -76,9 +104,14 @@ export default {
             rowSelection: null,
             paginationPageSize: 10,
             gridOptions: {},
+            
+
             total: '',
 
-            paging: {},
+            search:{
+                condition:'1',
+                word:'',
+            },
 
         };
     },
@@ -103,13 +136,19 @@ export default {
                 const total_board = await BoardApi.totalBoard();
                 this.rowData = results;
                 this.total = Validation.addComma(total_board);
-
             }catch(error){
                 console.log(error);
             }
         },
 
-        enterSecretNum() {
+        async getSearchList(){
+            try {
+                const results = await BoardApi.searchList(this.search.word, this.search.condition);
+                this.rowData = results.data;
+                this.total = Validation.addComma(results.data.length);
+            } catch (error) {
+                console.log(error);
+            }
         },
 
         goToCurrentStatus(){
@@ -142,9 +181,6 @@ export default {
                             ansId: ansId }
                 });
             }
-            
-            
-            
         },
 
     },
@@ -152,6 +188,7 @@ export default {
     beforeMount() {
         this.columnDefs = [
             { headerName: "순번", field: "bbd_seq" },
+            { field: "ans_seq", hide: true },
             { headerName: "보안", field: "inq_security_yn", valueFormatter: this.lockFormatter },
             { headerName: "제목", field: "bbd_title"},
             { headerName: "답변 수", field: "answer_count" },
@@ -162,8 +199,16 @@ export default {
 
         this.getQuestionList();
         this.rowSelection = 'single';
+        this.rowClassRules = {
+            "seperateAnswer": "data.ans_seq > 0",
+        };
     },
 };
 
 
 </script>
+<style>
+.ag-theme-alpine .seperateAnswer{
+    color: #FF4000 !important;
+}
+</style>

@@ -20,6 +20,13 @@ class SchedulerApi{
                 .then((response)=>response.data);
     }
 
+    searchList(searchWord, value){
+        return instance.get(this.URL + `/boards/${searchWord}`, 
+        {params:{
+            value: value
+        }})
+    }
+
     questionCreate(board){
         return instance.post(this.URL + '/question', {...board})
                 .then((response)=>response.data)

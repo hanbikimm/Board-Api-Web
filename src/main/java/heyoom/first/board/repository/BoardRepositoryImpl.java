@@ -26,7 +26,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "             a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
 				+ "             IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views \r\n"
 				+ "       FROM bbd.t_bbd a WHERE a.ans_seq = 0 \r\n"
-				+ "       ORDER BY a.bbd_seq desc", boardListMapper());
+				+ "       ORDER BY a.bbd_seq desc", questionListMapper());
 	}
 	
 	@Override
@@ -42,6 +42,29 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public int getTotalBoards() {
 		Integer count = jdbcTemplate.queryForObject("select count(*) from t_bbd", Integer.class);
 		return count;
+	}
+	
+	@Override
+	public List<Board> getBoardsOfTitle(String searchWord) {
+		String sql = "SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
+				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
+				+ "a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
+				+ "(SELECT sum(day_views) from bbd.t_inq_cnt where bbd_seq = a.bbd_seq and ans_seq =a.ans_seq) AS total_views\r\n"
+				+ "FROM bbd.t_bbd a  WHERE a.bbd_title LIKE '%" + searchWord + "%'\r\n"
+				+ "ORDER BY a.bbd_seq DESC, a.ans_seq ASC";
+		return jdbcTemplate.query(sql, boardListMapper());
+	}
+
+
+	@Override
+	public List<Board> getBoardsOfWriter(String searchWord) {
+		String sql = "SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
+				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
+				+ "a.reg_writer, a.reg_datetime, a.bbd_password,\r\n"
+				+ "(SELECT sum(day_views) from bbd.t_inq_cnt where bbd_seq = a.bbd_seq and ans_seq =a.ans_seq) AS total_views\r\n"
+				+ "FROM bbd.t_bbd a  WHERE a.reg_writer LIKE '%" + searchWord + "%'\r\n"
+				+ "ORDER BY a.bbd_seq DESC, a.ans_seq ASC";
+		return jdbcTemplate.query(sql, boardListMapper());
 	}
 
 	@Override
@@ -87,13 +110,14 @@ public class BoardRepositoryImpl implements BoardRepository {
 		return board;
 	}
 	
+	// 답변 있으면 질문을 지울 수 없음
 	@Override
 	public String checkAnswersForDelete() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
+	// 작성횟수++ 시에 이미 있는 아이디인지 확인하기
 	@Override
 	public String checkAnswersForCount() {
 		// TODO Auto-generated method stub
@@ -125,6 +149,23 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 
 
+	
+	private RowMapper<Board> questionListMapper(){
+		return (rs, rowNum) -> {
+			Board board = new Board();
+			board.setBbd_seq(rs.getLong("bbd_seq"));
+			board.setAns_seq(rs.getLong("ans_seq"));
+			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_datetime(rs.getString("reg_datetime"));
+			board.setBbd_title(rs.getString("bbd_title"));
+			board.setBbd_password(rs.getString("bbd_password"));
+			board.setInq_security_yn(rs.getString("inq_security_yn"));
+			board.setAnswer_count(rs.getLong("answer_count"));
+			board.setTotal_views(rs.getLong("total_views"));
+			
+			return board;
+		};
+	}
 	
 	private RowMapper<Board> boardListMapper(){
 		return (rs, rowNum) -> {
@@ -176,13 +217,5 @@ public class BoardRepositoryImpl implements BoardRepository {
 			return board;
 		};
 	}
-
-
-	
-
-
-
-	
-	
 	
 }

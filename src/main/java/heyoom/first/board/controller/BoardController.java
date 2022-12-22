@@ -48,6 +48,12 @@ public class BoardController {
 		return boardService.getAnswerList(id);
 	}
 	
+	// 게시글 검색
+	@GetMapping(value="/boards/{searchWord}")
+	public List<Board> searchBoard(@PathVariable("searchWord") String searchWord, Long value){
+		return boardService.getSearchList(searchWord, value);
+	}
+	
 	// 질문 등록
 	@PostMapping(value="/question")
 	public Board registeQuestion(@RequestBody Board board) {
@@ -78,8 +84,7 @@ public class BoardController {
 		return boardService.eraseBoard(bbdId, ansId);
 	}
 	
-	// 조회수
-//	@PutMapping(value="/board/")
+	
 	
 	
 	
