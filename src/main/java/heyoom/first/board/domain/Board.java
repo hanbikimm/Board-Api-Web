@@ -18,7 +18,6 @@ public class Board {
 	
 	private Long answer_count;
 	private Long total_views;
-//	private Long total_boards;
 	
 	
 	public Long getBbd_seq() {
@@ -125,13 +124,7 @@ public class Board {
 	public void setTotal_views(Long total_views) {
 		this.total_views = total_views;
 	}
-	
-//	public Long getTotal_boards() {
-//		return total_boards;
-//	}
-//	public void setTotal_boards(Long total_boards) {
-//		this.total_boards = total_boards;
-//	}
+
 
 	
 	

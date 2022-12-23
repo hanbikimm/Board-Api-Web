@@ -6,7 +6,7 @@
             <div class="flex items-center justify-between pb-3">
                 
                 <p class="text-2xl font-bold mt-2">({{ this.question.bbd_seq }}) {{ this.question.bbd_title }}</p>
-                <div class="z-50 cursor-pointer modal-close" @click="goToBoardList()">
+                <div class="z-50 cursor-pointer modal-close" @click="goBack()">
                     <svg
                         class="text-black fill-current"
                         xmlns="http://www.w3.org/2000/svg"
@@ -223,10 +223,8 @@ export default {
             }
         },
 
-        goToBoardList(){
-            this.$router.push({
-            name: 'boardList',
-            });
+        goBack(){
+            this.$router.go(-1);
         },
 
         itemsCheck(){

@@ -5,7 +5,7 @@
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
                 <p class="text-2xl font-bold mt-2">({{ this.answer.ans_seq }}) {{ this.answer.bbd_title }}</p>
-                <div class="z-50 cursor-pointer modal-close" @click="goToQuestion()">
+                <div class="z-50 cursor-pointer modal-close" @click="goBack()">
                     <svg
                         class="text-black fill-current"
                         xmlns="http://www.w3.org/2000/svg"
@@ -67,14 +67,7 @@ export default {
     },
 
     methods: {
-        goToQuestion(){
-            // this.$router.push({
-            // name: 'questionDetail',
-            // params:{
-            //     bbdId: this.answer.bbd_seq,
-            //     ansId: 0
-            // }
-            // })
+        goBack(){
             this.$router.go(-1);
         },
 
