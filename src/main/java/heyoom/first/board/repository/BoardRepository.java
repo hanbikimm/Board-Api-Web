@@ -17,8 +17,8 @@ public interface BoardRepository {
 	Board postAnswer(Board board);
 	String deleteBoard(Long bbdId, Long ansId);
 	Board updateBoard(Board board);
-	String checkAnswersForDelete();
-	String checkAnswersForCount();
+	int checkAnswersForDelete(Long bbdId);
+	String checkWrite();
 	int checkView(Long bbdId, Long ansId);
 	String plusView(Long bbdId, Long ansId, int count);
 	String plusWrite(Long bbdId, Long ansId);

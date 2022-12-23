@@ -92,8 +92,8 @@ export default {
                 if(confirm('정말로 삭제하시겠습니까?')){
                      const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
                     if(input === this.answer.bbd_password){
-                        await BoardApi.boardDelete(this.answer.bbd_seq, this.answer.ans_seq);
-                        alert('성공적으로 삭제되었습니다.');
+                        const message = await BoardApi.boardDelete(this.answer.bbd_seq, this.answer.ans_seq);
+                        alert(`${message}`);
                         this.goToQuestion();
                     } else if(input != this.answer.bbd_password){
                         alert('비밀번호가 틀렸습니다!');

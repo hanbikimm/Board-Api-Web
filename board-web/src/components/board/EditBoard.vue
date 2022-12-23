@@ -192,9 +192,16 @@ export default {
 
         async modifyBoard(){
             try {
-                await BoardApi.boardEdit(this.board.bbd_seq, this.board);
-                alert('게시글 수정이 완료되었습니다.');
-                this.$router.go();
+                if(confirm('정말로 수정하시겠습니까?')){
+                     const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
+                    if(input === this.board.bbd_password){
+                        await BoardApi.boardEdit(this.board.bbd_seq, this.board);
+                        alert('게시글 수정이 완료되었습니다.');
+                        this.$router.go();
+                    } else if(input != this.board.bbd_password){
+                        alert('비밀번호가 틀렸습니다!');
+                    }
+                }
             } catch (error) {
                 console.log(error);
                 alert('게시글 수정을 다시 시도해주세요!');

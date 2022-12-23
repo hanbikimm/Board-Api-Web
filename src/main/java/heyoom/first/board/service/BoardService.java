@@ -67,7 +67,19 @@ public class BoardService {
 	}
 	
 	public String eraseBoard(Long bbdId, Long ansId) {
-		return boardRepository.deleteBoard(bbdId, ansId);
+		String message = null;
+		if (ansId == 0) {
+			int count = boardRepository.checkAnswersForDelete(bbdId);
+			if (count > 0) {
+				message = "답변이 있어 삭제할 수 없습니다!";
+			} else {
+				message = boardRepository.deleteBoard(bbdId, ansId);
+			}
+		} else {
+			message = boardRepository.deleteBoard(bbdId, ansId);
+			;
+		}
+		return message;
 	}
 	
 	public Board editBoard(Board board) {

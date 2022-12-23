@@ -97,7 +97,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 		jdbcTemplate.update("DELETE FROM t_bbd WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
 		jdbcTemplate.update("DELETE FROM t_inq_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
 		jdbcTemplate.update("DELETE FROM t_ans_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
-		return "delete";
+		return "게시글을 삭제했습니다.";
 	}
 
 
@@ -112,14 +112,14 @@ public class BoardRepositoryImpl implements BoardRepository {
 	
 	// 답변 있으면 질문을 지울 수 없음
 	@Override
-	public String checkAnswersForDelete() {
-		// TODO Auto-generated method stub
-		return null;
-	}
+	public int checkAnswersForDelete(Long bbdId) {
+		return jdbcTemplate.queryForObject("SELECT count(*) FROM t_bbd \r\n"
+				+ "WHERE bbd_seq=? AND ans_seq>0", Integer.class, bbdId);
+	};
 
 	// 작성횟수++ 시에 이미 있는 아이디인지 확인하기
 	@Override
-	public String checkAnswersForCount() {
+	public String checkWrite() {
 		// TODO Auto-generated method stub
 		return null;
 	}
