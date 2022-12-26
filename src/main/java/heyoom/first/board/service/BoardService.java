@@ -28,11 +28,11 @@ public class BoardService {
 	
 	public List<Board> getSearchList(String searchWord, Long value){
 		List<Board> results = null;
-		searchWord = Seed.encrypt(searchWord);
 		
 		if (value == 1) {
 			results = boardRepository.getBoardsOfTitle(searchWord);
 		} else if (value == 2){
+			searchWord = Seed.encrypt(searchWord);
 			results = boardRepository.getBoardsOfWriter(searchWord);
 		}
 		return results;
