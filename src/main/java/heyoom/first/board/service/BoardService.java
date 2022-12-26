@@ -3,8 +3,11 @@ package heyoom.first.board.service;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.transaction.annotation.Transactional;
+
 import heyoom.first.board.domain.Board;
 import heyoom.first.board.repository.BoardRepository;
+import heyoom.first.security.Seed;
 
 public class BoardService {
 
@@ -42,30 +45,32 @@ public class BoardService {
 		return boardRepository.getTotalBoards();
 	}
 	
-	
+	@Transactional
 	public Board createQuestion(Board board) {
 		Board boardForm = new Board();
-		boardForm.setReg_writer(board.getReg_writer());
+		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
 		boardForm.setBbd_attach_1(board.getBbd_attach_1());
-		boardForm.setBbd_password(board.getBbd_password());
+		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
 		return boardRepository.postQuestion(boardForm);
 	}
 	
+	@Transactional
 	public Board createAnswer(Board board) {
 		Board boardForm = new Board();
 		boardForm.setBbd_seq(board.getBbd_seq());
-		boardForm.setReg_writer(board.getReg_writer());
+		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
 		boardForm.setBbd_attach_1(board.getBbd_attach_1());
-		boardForm.setBbd_password(board.getBbd_password());
+		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
 		return boardRepository.postAnswer(boardForm);
 	}
 	
+	@Transactional
 	public String eraseBoard(Long bbdId, Long ansId) {
 		String message = null;
 		if (ansId == 0) {
@@ -83,6 +88,8 @@ public class BoardService {
 	}
 	
 	public Board editBoard(Board board) {
+		board.setReg_writer(Seed.encrypt(board.getReg_writer()));
+		board.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		return boardRepository.updateBoard(board);
 	}
 	

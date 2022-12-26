@@ -9,6 +9,8 @@ import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import heyoom.first.board.domain.Board;
+import heyoom.first.board.domain.BoardStatus;
+import heyoom.first.security.Seed;
 
 public class BoardRepositoryImpl implements BoardRepository {
 	
@@ -75,6 +77,45 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views "
 				+ "FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq=?", boardMapper(), bbdId, ansId);
 		return result.stream().findAny();
+	}
+	
+	@Override
+	public List<BoardStatus> getChart() {
+		String sql = "      SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?\r\n"
+				+ "       union\r\n"
+				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
+				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
+				+ "         WHERE a.inq_date = b.write_date\r\n"
+				+ "           AND a.inq_date = ?";
+		return jdbcTemplate.query(sql, chartListMapper());
 	}
 	
 	@Override
@@ -155,10 +196,10 @@ public class BoardRepositoryImpl implements BoardRepository {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
 			board.setAns_seq(rs.getLong("ans_seq"));
-			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_writer(Seed.decrypt(rs.getString("reg_writer")));
 			board.setReg_datetime(rs.getString("reg_datetime"));
 			board.setBbd_title(rs.getString("bbd_title"));
-			board.setBbd_password(rs.getString("bbd_password"));
+			board.setBbd_password(Seed.decrypt(rs.getString("bbd_password")));
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setAnswer_count(rs.getLong("answer_count"));
 			board.setTotal_views(rs.getLong("total_views"));
@@ -172,10 +213,10 @@ public class BoardRepositoryImpl implements BoardRepository {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
 			board.setAns_seq(rs.getLong("ans_seq"));
-			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_writer(Seed.decrypt(rs.getString("reg_writer")));
 			board.setReg_datetime(rs.getString("reg_datetime"));
 			board.setBbd_title(rs.getString("bbd_title"));
-			board.setBbd_password(rs.getString("bbd_password"));
+			board.setBbd_password(Seed.decrypt(rs.getString("bbd_password")));
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setAnswer_count(rs.getLong("answer_count"));
 			board.setTotal_views(rs.getLong("total_views"));
@@ -189,11 +230,11 @@ public class BoardRepositoryImpl implements BoardRepository {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
 			board.setAns_seq(rs.getLong("ans_seq"));
-			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_writer(Seed.decrypt(rs.getString("reg_writer")));
 			board.setReg_datetime(rs.getString("reg_datetime"));
 			board.setBbd_title(rs.getString("bbd_title"));
 			board.setBbd_content(rs.getString("bbd_content"));
-			board.setBbd_password(rs.getString("bbd_password"));
+			board.setBbd_password(Seed.decrypt(rs.getString("bbd_password")));
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setAnswer_count(rs.getLong("answer_count"));
 			board.setTotal_views(rs.getLong("total_views"));
@@ -207,15 +248,29 @@ public class BoardRepositoryImpl implements BoardRepository {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
 			board.setAns_seq(rs.getLong("ans_seq"));
-			board.setReg_writer(rs.getString("reg_writer"));
+			board.setReg_writer(Seed.decrypt(rs.getString("reg_writer")));
 			board.setReg_datetime(rs.getString("reg_datetime"));
 			board.setBbd_title(rs.getString("bbd_title"));
-			board.setBbd_password(rs.getString("bbd_password"));
+			board.setBbd_password(Seed.decrypt(rs.getString("bbd_password")));
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setTotal_views(rs.getLong("total_views"));
 			
 			return board;
 		};
 	}
+	
+	private RowMapper<BoardStatus> chartListMapper(){
+		return (rs, rowNum) -> {
+			BoardStatus status = new BoardStatus();
+			status.setDate(rs.getString("date"));
+			status.setDailyView(rs.getLong("dailyView"));
+			status.setDailyWrite(rs.getLong("dailyWrite"));
+			
+			return status;
+		};
+	}
+
+
+	
 	
 }

@@ -66,8 +66,10 @@
                 </label>
                 <input
                   class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                  type="text"
-                  v-model="board.bbd_attach_1"/>
+                  type="file" multiple accept="image/*" @change="fileChange"/>
+                  <p v-for="file in this.files" :key="file.name">
+                    {{file.name}} ({{file.size}}) / {{file.type}}
+                  </p>
 
                 <label class="text-gray-700 ml-2">
                     비밀번호 (4자리 숫자)
@@ -120,24 +122,52 @@ export default {
 
             board:{
               ans_seq: 0,
-            }
+            },
+
+            files:[]
         }
     },
 
     methods: {
+      fileChange(e) {
+        var input = e.target; 
+        if (input.files && input.files[0]) { 
+              var reader = new FileReader(); 
+              console.log(e.target.files)
+              reader.onload = (e) => { 
+              this.files.push(e.target.result);      
+          }; 
+          reader.readAsDataURL(input.files[0]); 
+          e.target.value =''; // 있어야 같은 파일 지웠다가 다시 올릴수 있음.
+        }
+          let validation = true;
+          let message = '';
+
+          if (this.files.length > 5) {
+            validation= false;
+            alert('파일은 5개만 등록 가능합니다.');
+          }
+
+          if (validation) {
+              this.file = this.files;
+          }else {
+              this.file = '';
+              alert(message);
+          }
+      },
         itemsCheck(){
-       if(this.board.reg_writer == null || this.board.bbd_title == null || 
-          this.board.bbd_content == null || this.board.bbd_password == null){
-                alert("항목을 다 입력했는지 확인해주세요!")
-          } else{
-            if(this.board.inq_security_yn == true){
-              this.board.inq_security_yn = 'y';
-            } else{
-              this.board.inq_security_yn = 'n';
-            }
-            this.registerQuestion();
-          }   
-            
+          if(this.board.reg_writer == null || this.board.bbd_title == null || 
+              this.board.bbd_content == null || this.board.bbd_password == null){
+                    alert("항목을 다 입력했는지 확인해주세요!")
+              } else{
+                if(this.board.inq_security_yn == true){
+                  this.board.inq_security_yn = 'y';
+                } else{
+                  this.board.inq_security_yn = 'n';
+                }
+                this.registerQuestion();
+              }   
+                
         },
 
         async registerQuestion(){

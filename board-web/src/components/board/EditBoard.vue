@@ -162,7 +162,7 @@ export default {
     data() {
         return {
             open: false,
-            board: { }
+            board: { },
         };
     },
     methods: {
@@ -193,12 +193,12 @@ export default {
         async modifyBoard(){
             try {
                 if(confirm('정말로 수정하시겠습니까?')){
-                     const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
-                    if(input === this.board.bbd_password){
+                    const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
+                     if(input === this.defaultBoard.bbd_password){
                         await BoardApi.boardEdit(this.board.bbd_seq, this.board);
                         alert('게시글 수정이 완료되었습니다.');
                         this.$router.go();
-                    } else if(input != this.board.bbd_password){
+                    } else if(input != this.defaultBoard.bbd_password){
                         alert('비밀번호가 틀렸습니다!');
                     }
                 }

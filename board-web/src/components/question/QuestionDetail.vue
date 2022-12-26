@@ -203,7 +203,7 @@ export default {
 
         goToAnswerDetail(bbdId, ansId, security, password){
             if (security == 'y') {
-                const input = prompt('비밀번호를 입력하세요.', '4자리 숫자')
+                const input = prompt('비밀번호를 입력하세요.', '4자리 숫자');
                 if (input === password) {
                     this.$router.push({
                     name: 'answerDetail',
@@ -230,7 +230,7 @@ export default {
         itemsCheck(){
         if(this.board.reg_writer == null || this.board.bbd_title == null || 
           this.board.bbd_content == null || this.board.bbd_password == null){
-            alert("항목을 다 입력했는지 확인해주세요!")
+            alert("항목을 다 입력했는지 확인해주세요!");
         } else{
             if(this.board.inq_security_yn == true){
             this.board.inq_security_yn = 'y';

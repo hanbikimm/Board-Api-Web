@@ -1,6 +1,6 @@
 package heyoom.first.board.domain;
 
-public class Status {
+public class BoardStatus {
 	
 	private String date;
 	private String day;

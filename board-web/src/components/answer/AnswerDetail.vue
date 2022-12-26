@@ -87,7 +87,7 @@ export default {
                     if(input === this.answer.bbd_password){
                         const message = await BoardApi.boardDelete(this.answer.bbd_seq, this.answer.ans_seq);
                         alert(`${message}`);
-                        this.goToQuestion();
+                        this.goBack();
                     } else if(input != this.answer.bbd_password){
                         alert('비밀번호가 틀렸습니다!');
                     }

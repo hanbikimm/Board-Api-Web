@@ -9,7 +9,9 @@
     </div>
     <div class="m-10 flex items-center justify-center">
         > 조회 기간 &nbsp;
-        <select v-model="this.date.year">
+        <select 
+        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400">
+        v-model="this.date.year">
             <option disabled value="">년도</option>
             <option
                 v-for="(item, index) in yearList"
@@ -19,7 +21,9 @@
             
         </select>
         &nbsp;
-        <select v-model="this.date.month">
+        <select 
+        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+        v-model="this.date.month">
             <option disabled>월</option>
             <option
                 v-for="(item, index) in monthList"
@@ -28,18 +32,20 @@
             >{{ item.name }}</option>
         </select>
         &nbsp;
-        <select v-model="this.date.week">
+        <select 
+        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+        v-model="this.date.week">
             <option disabled value="">주간</option>
-            <option value="23">23</option>
-            <option value="24">둘째주</option>
-            <option value="3">셋째주</option>
-            <option value="4">넷째주</option>
+            <option
+                v-for="(item, index) in weekList"
+                :key="index"
+                :value="item.value"
+            >{{ item.value }}</option>
         </select>
     </div>
     <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
     </div>
-    <button @click="setDate()">moment</button>  
     <StatusBoard/>
 
     
@@ -55,13 +61,30 @@ export default {
         StatusBoard,
         GChart,
     },
+
+    computed:{
+        // setWeekList(){
+        //     const year = this.date.year;
+        //     const month = this.date.month;
+        //     for(let i=1; i<= 5; i++){
+        //         const week = 1;
+
+        //     }
+            
+        // }
+    },
+
     data() {
         return {
             date: {
                 year: moment().format('YYYY'),
                 month: moment().format('MM'),
-                week: ''
+                week: moment('').day(1).format("MM-DD") + ' ~ ' + moment('').day(7).format("MM-DD"),
             },
+
+            weekList:[
+
+            ],
 
             monthList:[
                 { name: "1월", value: "1" },

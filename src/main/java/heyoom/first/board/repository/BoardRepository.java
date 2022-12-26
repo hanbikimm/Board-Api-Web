@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import heyoom.first.board.domain.Board;
+import heyoom.first.board.domain.BoardStatus;
 
 public interface BoardRepository {
 	
@@ -13,6 +14,7 @@ public interface BoardRepository {
 	List<Board> getBoardsOfWriter(String searchWord);
 	Optional<Board> getBoard(Long bbdId, Long ansId);
 	int getTotalBoards();
+	List<BoardStatus> getChart();
 	Board postQuestion(Board board);
 	Board postAnswer(Board board);
 	String deleteBoard(Long bbdId, Long ansId);
