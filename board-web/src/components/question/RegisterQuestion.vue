@@ -111,6 +111,7 @@
 
 <script>
 import BoardApi from '@/api/BoardApi';
+import Validation from '@/assets/Validation';
 
 
 export default {
@@ -159,13 +160,15 @@ export default {
           if(this.board.reg_writer == null || this.board.bbd_title == null || 
               this.board.bbd_content == null || this.board.bbd_password == null){
                     alert("항목을 다 입력했는지 확인해주세요!")
+              } else if(Validation.passwordNum(this.board.bbd_password) == false){
+                alert('비밀번호는 4자리 숫자입니다.')
               } else{
-                if(this.board.inq_security_yn == true){
-                  this.board.inq_security_yn = 'y';
-                } else{
-                  this.board.inq_security_yn = 'n';
-                }
-                this.registerQuestion();
+                  if(this.board.inq_security_yn == true){
+                    this.board.inq_security_yn = 'y';
+                  } else{
+                    this.board.inq_security_yn = 'n';
+                  }
+                  this.registerQuestion();
               }   
                 
         },

@@ -81,40 +81,103 @@ public class BoardRepositoryImpl implements BoardRepository {
 	
 	@Override
 	public List<BoardStatus> getChart() {
-		String sql = "      SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?\r\n"
-				+ "       union\r\n"
-				+ "        SELECT ?, SUM(a.day_views), SUM(b.day_writes) \r\n"
-				+ "          FROM t_inq_cnt a, t_ans_cnt b\r\n"
-				+ "         WHERE a.inq_date = b.write_date\r\n"
-				+ "           AND a.inq_date = ?";
+		String sql = "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-19' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-19'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-19'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-19' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-19'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-20' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-20'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-20'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-20' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-20'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-21' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-21'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-21'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-21' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-21'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-22' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-22'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-22'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-22' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-22'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-23' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-23'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-23'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-23' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-23'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-24' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-24'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-24'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-24' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-24'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)\r\n"
+				+ "UNION\r\n"
+				+ "(SELECT IFNULL(MAX(ans_seq) + 1, 1) AS null_YN,\r\n"
+				+ "		  '2022-12-25' AS prc_date, \r\n"
+				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = '2022-12-25'), 0) AS sum_day_views, \r\n"
+				+ "        IFNULL((SELECT SUM(day_writes)  FROM t_ans_cnt   WHERE write_date = '2022-12-25'), 0) AS sum_day_writes, \r\n"
+				+ "        IFNULL(bbd_seq, 0) AS inq_bbd_seq,  \r\n"
+				+ "        IFNULL(ans_seq,0) AS inq_ans_seq, \r\n"
+				+ "        IFNULL((SELECT b.bbd_seq from t_ans_cnt b  WHERE b.write_date <= '2022-12-25' ORDER BY b.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
+				+ "        0 AS write_ans_seq,\r\n"
+				+ "        IFNULL((SELECT c.bbd_title from t_bbd c where c.bbd_seq = inq_bbd_seq AND c.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
+				+ "        IFNULL((SELECT d.bbd_title from t_bbd d where d.bbd_seq = write_bbd_seq AND d.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "from t_inq_cnt  \r\n"
+				+ "where inq_date = '2022-12-25'\r\n"
+				+ "ORDER BY day_views DESC LIMIT 1)";
 		return jdbcTemplate.query(sql, chartListMapper());
 	}
 	
@@ -160,15 +223,21 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 	// 작성횟수++ 시에 이미 있는 아이디인지 확인하기
 	@Override
-	public String checkWrite() {
-		// TODO Auto-generated method stub
-		return null;
+	public int checkWrite() {
+		return jdbcTemplate.queryForObject("SELECT count(*) FROM t_ans_cnt WHERE write_date=DATE_FORMAT(NOW(), '%Y-%m-%d') \\r\\n"
+				+ "AND bbd_seq=? AND ans_seq=?", Integer.class);
+	}
+	
+	@Override
+	public String plusWrite(Long bbdId, Long ansId) {
+		jdbcTemplate.update("INSERT INTO t_ans_cnt VALUES(DATE_FORMAT(NOW(), '%Y-%m-%d'), ?, ?, 1)", bbdId, ansId);
+		return "day write + 1";
 	}
 
 	@Override
 	public int checkView(Long bbdId, Long ansId) {
 		return jdbcTemplate.queryForObject("SELECT count(*) from t_inq_cnt WHERE inq_date=DATE_FORMAT(NOW(), '%Y-%m-%d')\r\n"
-				+ "             AND bbd_seq=? AND ans_seq=? \r\n", Integer.class, bbdId, ansId);
+				+ "             AND bbd_seq=? AND ans_seq=?", Integer.class, bbdId, ansId);
 	}
 
 	@Override
@@ -181,15 +250,6 @@ public class BoardRepositoryImpl implements BoardRepository {
 		}
 		return "day view + 1";
 	}
-
-
-	@Override
-	public String plusWrite(Long bbdId, Long ansId) {
-		jdbcTemplate.update("INSERT INTO t_ans_cnt VALUES(DATE_FORMAT(NOW(), '%Y-%m-%d'), ?, ?, 1)", bbdId, ansId);
-		return "day write + 1";
-	}
-
-
 	
 	private RowMapper<Board> questionListMapper(){
 		return (rs, rowNum) -> {

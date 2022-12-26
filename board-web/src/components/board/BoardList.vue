@@ -165,23 +165,32 @@ export default {
             if (row[0].inq_security_yn == 'y') {
                 const input = prompt('비밀번호를 입력하세요.', '4자리 숫자')
                 if (input === row[0].bbd_password) {
+                    this.updateView(bbdId, ansId);
                     this.$router.push({
                     name: 'questionDetail',
                     params: { bbdId: bbdId, 
                             ansId: ansId }
                     });
+                    
+                    
                 } else if(input != row[0].bbd_password) {
                     alert('비밀번호가 틀렸습니다!');
                     this.getQuestionList();
                 }
             } else {
+                this.updateView(bbdId, ansId);
                 this.$router.push({
                     name: 'questionDetail',
                     params: { bbdId: bbdId, 
                             ansId: ansId }
                 });
+                
             }
         },
+
+        async updateView(bbdId, ansId){
+            await BoardApi.boardView(bbdId, ansId);
+        }
 
     },
 

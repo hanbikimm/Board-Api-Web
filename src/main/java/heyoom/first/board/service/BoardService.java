@@ -6,6 +6,7 @@ import java.util.Optional;
 import org.springframework.transaction.annotation.Transactional;
 
 import heyoom.first.board.domain.Board;
+import heyoom.first.board.domain.BoardStatus;
 import heyoom.first.board.repository.BoardRepository;
 import heyoom.first.security.Seed;
 
@@ -27,6 +28,7 @@ public class BoardService {
 	
 	public List<Board> getSearchList(String searchWord, Long value){
 		List<Board> results = null;
+		searchWord = Seed.encrypt(searchWord);
 		
 		if (value == 1) {
 			results = boardRepository.getBoardsOfTitle(searchWord);
@@ -37,12 +39,15 @@ public class BoardService {
 	}
 	
 	public Optional<Board> getBoardDetail(Long bbdId, Long ansId) {
-		updateDayViews(bbdId, ansId);
 		return boardRepository.getBoard(bbdId, ansId);
 	}
 	
 	public int getTotal() {
 		return boardRepository.getTotalBoards();
+	}
+	
+	public List<BoardStatus> getStatus(){
+		return boardRepository.getChart();
 	}
 	
 	@Transactional

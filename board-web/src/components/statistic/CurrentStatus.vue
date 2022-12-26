@@ -46,6 +46,7 @@
     <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
     </div>
+    <button @click="setWeekList()">button</button>
     <StatusBoard/>
 
     
@@ -54,6 +55,7 @@
 import StatusBoard from './StatusBoard.vue';
 import { GChart } from "vue-google-charts";
 import moment from 'moment';
+import Validation from '@/assets/Validation';
 
 export default {
     name: "CurrentStatus",
@@ -142,11 +144,12 @@ export default {
             })
         },
 
-        setDate(){
+        setWeekList(){
             const this_monday = moment().day(1).format("YYYY-MM-DD");
             const this_sunday = moment().day(7).format("YYYY-MM-DD");
             console.log(this_monday)
             console.log(this_sunday);
+            Validation.passwordNum(1234);
         }
     }
     

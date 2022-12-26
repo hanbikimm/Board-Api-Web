@@ -60,6 +60,15 @@ class SchedulerApi{
                 .then((response)=>response.data)
     }
 
+    boardView(bbdId, ansId){
+        return instance.put(this.URL + '/board/view', null,
+        { params:{
+            bbdId: bbdId, 
+            ansId: ansId 
+        }})
+                .then((response)=>response.data)
+    }
+
     
 
 

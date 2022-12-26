@@ -84,6 +84,12 @@ public class BoardController {
 		return boardService.eraseBoard(bbdId, ansId);
 	}
 	
+	//조회수 기능
+	@PutMapping(value="board/view")
+	public String updateView(Long bbdId, Long ansId) {
+		return boardService.updateDayViews(bbdId, ansId);
+	}
+	
 	
 	
 	

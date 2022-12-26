@@ -20,7 +20,7 @@ public interface BoardRepository {
 	String deleteBoard(Long bbdId, Long ansId);
 	Board updateBoard(Board board);
 	int checkAnswersForDelete(Long bbdId);
-	String checkWrite();
+	int checkWrite();
 	int checkView(Long bbdId, Long ansId);
 	String plusView(Long bbdId, Long ansId, int count);
 	String plusWrite(Long bbdId, Long ansId);

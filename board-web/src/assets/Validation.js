@@ -1,8 +1,13 @@
 class Validation{
 
     addComma(num){
-        var regexp = /\B(?=(\d{3})+(?!\d))/g;
+        const regexp = /\B(?=(\d{3})+(?!\d))/g;
         return num.toString().replace(regexp, ',');
+    }
+
+    passwordNum(num){
+        const regexp = /^[0-9]{4}$/;
+        return regexp.test(num);
     }
 
 }
