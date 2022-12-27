@@ -1,5 +1,10 @@
 package heyoom.first.board.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -46,8 +51,34 @@ public class BoardService {
 		return boardRepository.getTotalBoards();
 	}
 	
-	public List<BoardStatus> getStatus(){
-		return boardRepository.getChart();
+	public List<BoardStatus> getStatus(String date){
+		List<String> week = new ArrayList<String>();
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		
+			try {
+				week.add(date);
+				
+				for (int i = 1; i <= 6; i++) {
+					// string -> date
+					Date typeDate = dateFormat.parse(date);
+					
+					// date -> calender
+					Calendar typeCalendar = Calendar.getInstance();
+					typeCalendar.setTime(typeDate);
+
+					// calender += 1 day
+					typeCalendar.add(Calendar.DATE, i);
+					
+					// + 1day -> string
+					String typeString = dateFormat.format(typeCalendar.getTime());
+					week.add(typeString);
+				}
+			} catch (ParseException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		return boardRepository.getChart(week);
 	}
 	
 	@Transactional

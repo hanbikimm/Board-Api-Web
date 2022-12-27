@@ -11,11 +11,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 import heyoom.first.board.domain.Board;
+import heyoom.first.board.domain.BoardStatus;
 import heyoom.first.board.service.BoardService;
 
 @RestController
@@ -88,6 +88,12 @@ public class BoardController {
 	@PutMapping(value="board/view")
 	public String updateView(Long bbdId, Long ansId) {
 		return boardService.updateDayViews(bbdId, ansId);
+	}
+	
+	//현황판 데이터
+	@GetMapping(value="board/status/{date}")
+	public List<BoardStatus> statusOfBoard(@PathVariable("date") String date){
+		return boardService.getStatus(date);
 	}
 	
 	

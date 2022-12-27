@@ -10,8 +10,9 @@
     <div class="m-10 flex items-center justify-center">
         > 조회 기간 &nbsp;
         <select 
-        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400">
-        v-model="this.date.year">
+        class="p-2.5 cursor-pointer text-sm font-medium text-gray-900 focus:outline-none bg-transparent border-0 border-b-2 border-gray-300 hover:border-gray-400"
+        v-model="this.date.year"
+        @change="setWeekList()">
             <option disabled value="">년도</option>
             <option
                 v-for="(item, index) in yearList"
@@ -22,8 +23,9 @@
         </select>
         &nbsp;
         <select 
-        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400"
-        v-model="this.date.month">
+        class="p-2.5 cursor-pointer text-sm font-medium text-gray-900 focus:outline-none bg-transparent border-0 border-b-2 border-gray-300 hover:border-gray-400"
+        v-model="this.date.month"
+        @change="setWeekList()">
             <option disabled>월</option>
             <option
                 v-for="(item, index) in monthList"
@@ -33,47 +35,73 @@
         </select>
         &nbsp;
         <select 
-        class="p-2.5 text-sm font-medium rounded-lg text-gray-900 focus:outline-none bg-transparent border border-gray-300 hover:bg-gray-100 hover:border-gray-400"
+        class="p-2.5 cursor-pointer text-sm font-medium text-gray-900 focus:outline-none bg-transparent border-0 border-b-2 border-gray-300 hover:border-gray-400"
         v-model="this.date.week">
             <option disabled value="">주간</option>
             <option
                 v-for="(item, index) in weekList"
                 :key="index"
                 :value="item.value"
-            >{{ item.value }}</option>
+            >{{ item.name }}</option>
         </select>
+        <button @click="setStatusData()"
+            class="top-0 right-0 ml-2 p-2.5 text-sm font-medium rounded-lg border text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
+            <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+        </button>
     </div>
-    <div>
+    <!-- <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
+    </div> -->
+
+    <div class="flex flex-col mt-7 mx-14">
+        <div class="py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
+            <div class="inline-block min-w-full overflow-hidden align-middle border-b border-gray-200 shadow sm:rounded-lg">
+                <table class="min-w-full">
+                    <thead>
+                        <tr>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            일자
+                            </th>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            요일
+                            </th>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            조회 건수
+                            </th>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            작성 건수
+                            </th>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            조회 1위 글
+                            </th>
+                            <th class="px-6 py-3 text-sm font-bold leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50">
+                            답변 1위 글
+                            </th>
+                        </tr>
+                    </thead>
+
+                    <StatusListItem 
+                        v-for="statusItem in this.statusList" :key="statusItem.date"
+                        :statusItem = "statusItem"/>
+
+                </table>
+            </div>
+        </div>
     </div>
-    <button @click="setWeekList()">button</button>
-    <StatusBoard/>
 
     
 </template>
 <script>
-import StatusBoard from './StatusBoard.vue';
 import { GChart } from "vue-google-charts";
 import moment from 'moment';
-import Validation from '@/assets/Validation';
+import BoardApi from '@/api/BoardApi';
+import StatusListItem from './StatusListItem.vue';
 
 export default {
     name: "CurrentStatus",
     components: { 
-        StatusBoard,
         GChart,
-    },
-
-    computed:{
-        // setWeekList(){
-        //     const year = this.date.year;
-        //     const month = this.date.month;
-        //     for(let i=1; i<= 5; i++){
-        //         const week = 1;
-
-        //     }
-            
-        // }
+        StatusListItem,
     },
 
     data() {
@@ -81,23 +109,21 @@ export default {
             date: {
                 year: moment().format('YYYY'),
                 month: moment().format('MM'),
-                week: moment('').day(1).format("MM-DD") + ' ~ ' + moment('').day(7).format("MM-DD"),
+                week: moment().day(1).format("MM-DD")
             },
 
-            weekList:[
-
-            ],
+            weekList:[],
 
             monthList:[
-                { name: "1월", value: "1" },
-                { name: "2월", value: "2" },
-                { name: "3월", value: "3" },
-                { name: "4월", value: "4" },
-                { name: "5월", value: "5" },
-                { name: "6월", value: "6" },
-                { name: "7월", value: "7" },
-                { name: "8월", value: "8" },
-                { name: "9월", value: "9" },
+                { name: "1월", value: "01" },
+                { name: "2월", value: "02" },
+                { name: "3월", value: "03" },
+                { name: "4월", value: "04" },
+                { name: "5월", value: "05" },
+                { name: "6월", value: "06" },
+                { name: "7월", value: "07" },
+                { name: "8월", value: "08" },
+                { name: "9월", value: "09" },
                 { name: "10월", value: "10" },
                 { name: "11월", value: "11" },
                 { name: "12월", value: "12" },
@@ -121,19 +147,14 @@ export default {
 
             chartData: [
                 ['날짜', '조회수', '작성수'],
-                ['월(12/01)', 105, 100],
-                ['화(12/02)', 130, 65],
-                ['수(12/03)', 288, 13],
-                ['목(12/04)', 78, 30],
-                ['금(12/05)', 77, 45],
-                ['토(12/06)', 84, 22],
-                ['일(12/07)', 196, 80],
-            ],
+                 ],
             chartOptions: {
                 chart: {
                 title: "조회 및 작성 통계",          
                 }
-            }
+            },
+
+            statusList:[],
         }
     },
 
@@ -145,12 +166,48 @@ export default {
         },
 
         setWeekList(){
-            const this_monday = moment().day(1).format("YYYY-MM-DD");
-            const this_sunday = moment().day(7).format("YYYY-MM-DD");
-            console.log(this_monday)
-            console.log(this_sunday);
-            Validation.passwordNum(1234);
-        }
+            this.weekList = [];
+            let year = this.date.year;
+            let month = this.date.month;
+            let monday = 1;
+            let sunday = 7;
+
+            for(let i=0; i<5; i++){
+                let week_monday = moment(`${year}${month}01`).day(monday).format("MM-DD");
+                let week_sunday = moment(`${year}${month}01`).day(sunday).format("MM-DD");
+                let obj = { name: `${week_monday} ~ ${week_sunday}`, value: `${week_monday}` };
+                this.weekList.push(obj);
+                monday += 7;
+                sunday += 7;
+            }   
+        },
+
+        setStatusData(){
+            const date = `${this.date.year}-${this.date.week}`;
+            this.getStatusData(date);
+        },
+
+        // setChartData(){
+        //     for (item in this.statusList) {
+        //         console.log(item);
+        //     }
+        // },
+
+        async getStatusData(date){
+            try{
+                const data = await BoardApi.boardStatus(date);
+                this.statusList = data;
+                this.setChartData();
+
+            }catch(error){
+                console.log(error);
+            }
+        },
+    },
+
+    mounted(){
+        this.setWeekList();
+        this.setStatusData();
     }
     
 }

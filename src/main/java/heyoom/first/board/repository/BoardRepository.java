@@ -14,7 +14,7 @@ public interface BoardRepository {
 	List<Board> getBoardsOfWriter(String searchWord);
 	Optional<Board> getBoard(Long bbdId, Long ansId);
 	int getTotalBoards();
-	List<BoardStatus> getChart();
+	List<BoardStatus> getChart(List<String> week);
 	Board postQuestion(Board board);
 	Board postAnswer(Board board);
 	String deleteBoard(Long bbdId, Long ansId);

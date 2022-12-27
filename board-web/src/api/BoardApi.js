@@ -69,10 +69,10 @@ class SchedulerApi{
                 .then((response)=>response.data)
     }
 
-    
-
-
-   
+    boardStatus(date){
+        return instance.get(this.URL + `/board/status/${date}`)
+                .then((response)=>response.data)
+    }
 }
 
 export default new SchedulerApi();

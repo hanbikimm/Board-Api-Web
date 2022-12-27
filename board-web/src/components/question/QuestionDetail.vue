@@ -154,12 +154,6 @@ export default {
         };
     },
 
-    computed:{
-        content(){
-            return this.question.bbd_content.split('\n').join('<br>');
-        }
-    },
-
     methods: {
         async getQuestionDetail(){
             try{
