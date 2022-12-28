@@ -44,14 +44,14 @@
                 :value="item.value"
             >{{ item.name }}</option>
         </select>
-        <button @click="setStatusData()"
+        <button @click="getStatusData()"
             class="top-0 right-0 ml-2 p-2.5 text-sm font-medium rounded-lg border text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
             <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </button>
     </div>
-    <!-- <div>
+    <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
-    </div> -->
+    </div>
 
     <div class="flex flex-col mt-7 mx-14">
         <div class="py-2 overflow-x-auto sm:-mx-6 sm:px-6 lg:-mx-8 lg:px-8">
@@ -145,9 +145,7 @@ export default {
                 { name: "2010년", value: "2010" },
             ],
 
-            chartData: [
-                ['날짜', '조회수', '작성수'],
-                 ],
+            chartData: [],
             chartOptions: {
                 chart: {
                 title: "조회 및 작성 통계",          
@@ -166,39 +164,53 @@ export default {
         },
 
         setWeekList(){
-            this.weekList = [];
-            let year = this.date.year;
-            let month = this.date.month;
-            let monday = 1;
-            let sunday = 7;
+            try {
+                this.weekList = [];
+                let year = this.date.year;
+                let month = this.date.month;
+                let monday = 1;
+                let sunday = 7;
 
-            for(let i=0; i<5; i++){
-                let week_monday = moment(`${year}${month}01`).day(monday).format("MM-DD");
-                let week_sunday = moment(`${year}${month}01`).day(sunday).format("MM-DD");
-                let obj = { name: `${week_monday} ~ ${week_sunday}`, value: `${week_monday}` };
-                this.weekList.push(obj);
-                monday += 7;
-                sunday += 7;
-            }   
+                for(let i=0; i<5; i++){
+                    let week_monday = moment(`${year}${month}01`).day(monday).format("MM-DD");
+                    let week_sunday = moment(`${year}${month}01`).day(sunday).format("MM-DD");
+                    let obj = { name: `${week_monday} ~ ${week_sunday}`, value: `${week_monday}` };
+                    this.weekList.push(obj);
+                    monday += 7;
+                    sunday += 7;
+                }   
+            } catch (error) {
+                console.log(error);
+            }
+            
         },
 
-        setStatusData(){
+        getStatusData(){
             const date = `${this.date.year}-${this.date.week}`;
-            this.getStatusData(date);
+            this.setStatusData(date);
         },
 
-        // setChartData(){
-        //     for (item in this.statusList) {
-        //         console.log(item);
-        //     }
-        // },
+        setChartData(){
+            try {
+                // 초기화
+                this.chartData = [];
+                let dataRow = ['날짜', '조회수', '작성수'];
+                this.chartData.push(dataRow);
+                for (let i=0; i<this.statusList.length; i++) {
+                    let data = this.statusList[i];
+                    dataRow = [`${data.day}(${data.date.slice(5,7)}/${data.date.slice(8)})`, data.dailyView, data.dailyWrite];
+                    this.chartData.push(dataRow);
+                }
+            } catch (error) {
+                console.log(error);
+            }
+        },
 
-        async getStatusData(date){
+        async setStatusData(date){
             try{
                 const data = await BoardApi.boardStatus(date);
                 this.statusList = data;
                 this.setChartData();
-
             }catch(error){
                 console.log(error);
             }
@@ -207,7 +219,7 @@ export default {
 
     mounted(){
         this.setWeekList();
-        this.setStatusData();
+        this.getStatusData();
     }
     
 }
