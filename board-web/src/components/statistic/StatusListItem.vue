@@ -20,8 +20,8 @@
 
             <td 
             @click="goToBoard(statusItem.bbdIdOfFirstView, statusItem.ansIdOfFirstView)"
-            :class="[statusItem.ansIdOfFirstView > 0 ? 'seperate-answer' : ''] && [statusItem.bbdIdOfFirstView == 0 ? '': 'cursor-pointer']"
-            class="px-6 py-4 text-sm leading-5 text-gray-500 border-b border-gray-200 whitespace-nowrap">
+            :class="[statusItem.ansIdOfFirstView > 0 ? 'seperate-answer' : 'text-gray-500', statusItem.bbdIdOfFirstView == 0 ? '': 'cursor-pointer']"
+            class="px-6 py-4 text-sm leading-5  border-b border-gray-200 whitespace-nowrap">
                 {{ statusItem.bbdTitleOfFirstView }}
             </td>
 
@@ -36,6 +36,7 @@
 </template>
 <script>
 import moment from 'moment';
+import BoardApi from '@/api/BoardApi';
 
 export default {
     name: 'statusListItem',
@@ -56,15 +57,28 @@ export default {
     },
     methods:{
         goToBoard(bbdId, ansId){
-            if (bbdId > 0) {
-                this.$router.push({
+            if (bbdId > 0 && this.checkDate != '-') {
+                if (ansId == 0) {
+                    this.updateView(bbdId, ansId);
+                    this.$router.push({
                     name: 'questionDetail',
                     params: { bbdId: bbdId, 
                             ansId: ansId }
                     });
+                } else {
+                    this.updateView(bbdId, ansId);
+                    this.$router.push({
+                    name: 'answerDetail',
+                    params: { bbdId: bbdId, 
+                            ansId: ansId }
+                    });
+                }
             }
-            
         },
+
+        async updateView(bbdId, ansId){
+            await BoardApi.boardView(bbdId, ansId);
+        }
 
         
     }

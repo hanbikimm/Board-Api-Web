@@ -4,7 +4,7 @@
         <div class="px-6 py-4 text-left modal-content">
             <!--Title-->
             <div class="flex items-center justify-between pb-3">
-                <p class="text-2xl font-bold mt-2">({{ this.answer.ans_seq }}) {{ this.answer.bbd_title }}</p>
+                <p class="text-2xl font-bold mt-2">({{ this.answer.bbd_seq }}-{{ this.answer.ans_seq }}) {{ this.answer.bbd_title }}</p>
                 <div class="z-50 cursor-pointer modal-close" @click="goBack()">
                     <svg
                         class="text-black fill-current"

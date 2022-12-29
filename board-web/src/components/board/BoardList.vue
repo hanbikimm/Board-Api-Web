@@ -51,11 +51,12 @@
             :rowClassRules="rowClassRules"
         >
         </ag-grid-vue>
+        <div class="flex justify-end mt-9">
+            <registerQuestion/>
+        </div>
     </div>
 
-    <div class="flex justify-end mt-9">
-        <registerQuestion/>
-    </div>
+    
 
 </div>
 </template>
