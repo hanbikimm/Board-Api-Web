@@ -7,21 +7,21 @@ import org.junit.jupiter.api.Test;
 public class SeedTest {
  
     @Test
-    public void ¾Ïº¹È£È­_Å×½ºÆ®() {
+    public void ì•”í˜¸í™”í…ŒìŠ¤íŠ¸() {
         // given
-        String rawMessage = "±èÇÑºñ";
-        String testMessage = "±èÇÑ";
-        System.out.println("¿øº» µ¥ÀÌÅÍ =>" + rawMessage);
-        System.out.println("¿øº» µ¥ÀÌÅÍ =>" + testMessage);
+        String rawMessage = "ê¹€í•œë¹„";
+        String testMessage = "í•œë¹„";
+        System.out.println("ì›ë³¸ ë©”ì„¸ì§€ =>" + rawMessage);
+        System.out.println("ì›ë³¸ ë©”ì„¸ì§€ =>" + testMessage);
  
         // when
         String encryptedMessage = Seed.encrypt(rawMessage);
         String encryptedMessage2 = Seed.encrypt(testMessage);
-        System.out.println("¾ÏÈ£È­µÈ µ¥ÀÌÅÍ => " + encryptedMessage);
-        System.out.println("¾ÏÈ£È­µÈ µ¥ÀÌÅÍ => " + encryptedMessage2);
+        System.out.println("ì•”í˜¸í™”ëœ ë©”ì„¸ì§€ => " + encryptedMessage);
+        System.out.println("ì•”í˜¸í™”ëœ ë©”ì„¸ì§€ => " + encryptedMessage2);
  
         String decryptedMessage = Seed.decrypt(encryptedMessage);
-        System.out.println("º¹È£È­µÈ µ¥ÀÌÅÍ => " + new String(decryptedMessage));
+        System.out.println("ë³µí˜¸í™”ëœ ë©”ì„¸ì§€ => " + new String(decryptedMessage));
  
         // then
         assertThat(rawMessage).isEqualTo(decryptedMessage);

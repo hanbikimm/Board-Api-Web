@@ -48,6 +48,11 @@
             class="top-0 right-0 ml-2 p-2.5 text-sm font-medium rounded-lg border text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
             <svg aria-hidden="true" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
         </button>
+        <button
+         @click="generateStatus()"
+          class="block font-medium rounded-lg ml-5 text-base px-4 py-2 text-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
+          출력
+        </button>
     </div>
     <div>
         <GChart type="ColumnChart" :data="chartData" :options="chartOptions"/>
@@ -130,19 +135,20 @@ export default {
             ],
 
             yearList:[
+                { name: "2023년", value: "2023" },
                 { name: "2022년", value: "2022" },
                 { name: "2021년", value: "2021" },
                 { name: "2020년", value: "2020" },
-                { name: "2019년", value: "2019" },
-                { name: "2018년", value: "2018" },
-                { name: "2017년", value: "2017" },
-                { name: "2016년", value: "2016" },
-                { name: "2015년", value: "2015" },
-                { name: "2014년", value: "2014" },
-                { name: "2013년", value: "2013" },
-                { name: "2012년", value: "2012" },
-                { name: "2011년", value: "2011" },
-                { name: "2010년", value: "2010" },
+                // { name: "2019년", value: "2019" },
+                // { name: "2018년", value: "2018" },
+                // { name: "2017년", value: "2017" },
+                // { name: "2016년", value: "2016" },
+                // { name: "2015년", value: "2015" },
+                // { name: "2014년", value: "2014" },
+                // { name: "2013년", value: "2013" },
+                // { name: "2012년", value: "2012" },
+                // { name: "2011년", value: "2011" },
+                // { name: "2010년", value: "2010" },
             ],
 
             chartData: [],
@@ -215,6 +221,15 @@ export default {
                 console.log(error);
             }
         },
+
+        async generateStatus(){
+            try {
+                const date = `${this.date.year}-${this.date.week}`;
+                window.open(`http://localhost:8000/bbd/generate/${date}`);
+            } catch (error) {
+                console.log(error);
+            }
+        }
     },
 
     mounted(){

@@ -77,17 +77,26 @@ public class BoardService {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
 		return boardRepository.getChart(week);
 	}
 	
 	@Transactional
 	public Board createQuestion(Board board) {
+		System.out.println(board.getBbd_attach_1());
+		System.out.println(board.getBbd_attach_2());
+		System.out.println(board.getBbd_attach_3());
+		System.out.println(board.getBbd_attach_4());
+		System.out.println(board.getBbd_attach_5());
+		System.out.println(board.getBbd_attach_length());
 		Board boardForm = new Board();
 		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
 		boardForm.setBbd_attach_1(board.getBbd_attach_1());
+		boardForm.setBbd_attach_2(board.getBbd_attach_2());
+		boardForm.setBbd_attach_3(board.getBbd_attach_3());
+		boardForm.setBbd_attach_4(board.getBbd_attach_4());
+		boardForm.setBbd_attach_5(board.getBbd_attach_5());
 		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
 		return boardRepository.postQuestion(boardForm);
@@ -101,6 +110,10 @@ public class BoardService {
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
 		boardForm.setBbd_attach_1(board.getBbd_attach_1());
+		boardForm.setBbd_attach_2(board.getBbd_attach_2());
+		boardForm.setBbd_attach_3(board.getBbd_attach_3());
+		boardForm.setBbd_attach_4(board.getBbd_attach_4());
+		boardForm.setBbd_attach_5(board.getBbd_attach_5());
 		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
 		return boardRepository.postAnswer(boardForm);
@@ -112,7 +125,7 @@ public class BoardService {
 		if (ansId == 0) {
 			int count = boardRepository.checkAnswersForDelete(bbdId);
 			if (count > 0) {
-				message = "´äº¯ÀÌ ÀÖ¾î »èÁ¦ÇÒ ¼ö ¾ø½À´Ï´Ù!";
+				message = "ë‹µë³€ì´ ì¡´ì¬í•´ ì‚­ì œí•  ìˆ˜ ì—†ìŠµë‹ˆë‹¤!";
 			} else {
 				message = boardRepository.deleteBoard(bbdId, ansId);
 			}

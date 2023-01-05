@@ -1,5 +1,7 @@
 package heyoom.first.board.domain;
 
+import org.springframework.web.multipart.MultipartFile;
+
 public class Board {
 
 	private Long bbd_seq;
@@ -7,11 +9,12 @@ public class Board {
 	private String reg_writer;
 	private String bbd_title;
 	private String bbd_content;
-	private String bbd_attach_1;
-	private String bbd_attach_2;
-	private String bbd_attach_3;
-	private String bbd_attach_4;
-	private String bbd_attach_5;
+	private Long bbd_attach_length;
+	private MultipartFile bbd_attach_1;
+	private MultipartFile bbd_attach_2;
+	private MultipartFile bbd_attach_3;
+	private MultipartFile bbd_attach_4;
+	private MultipartFile bbd_attach_5;
 	private String bbd_password;
 	private String inq_security_yn;
 	private String reg_datetime;
@@ -55,38 +58,38 @@ public class Board {
 		this.bbd_content = bbd_content;
 	}
 	
-	public String getBbd_attach_1() {
+	public MultipartFile getBbd_attach_1() {
 		return bbd_attach_1;
 	}
-	public void setBbd_attach_1(String bbd_attach_1) {
+	public void setBbd_attach_1(MultipartFile bbd_attach_1) {
 		this.bbd_attach_1 = bbd_attach_1;
 	}
 	
-	public String getBbd_attach_2() {
+	public MultipartFile getBbd_attach_2() {
 		return bbd_attach_2;
 	}
-	public void setBbd_attach_2(String bbd_attach_2) {
+	public void setBbd_attach_2(MultipartFile bbd_attach_2) {
 		this.bbd_attach_2 = bbd_attach_2;
 	}
 	
-	public String getBbd_attach_3() {
+	public MultipartFile getBbd_attach_3() {
 		return bbd_attach_3;
 	}
-	public void setBbd_attach_3(String bbd_attach_3) {
+	public void setBbd_attach_3(MultipartFile bbd_attach_3) {
 		this.bbd_attach_3 = bbd_attach_3;
 	}
 	
-	public String getBbd_attach_4() {
+	public MultipartFile getBbd_attach_4() {
 		return bbd_attach_4;
 	}
-	public void setBbd_attach_4(String bbd_attach_4) {
+	public void setBbd_attach_4(MultipartFile bbd_attach_4) {
 		this.bbd_attach_4 = bbd_attach_4;
 	}
 	
-	public String getBbd_attach_5() {
+	public MultipartFile getBbd_attach_5() {
 		return bbd_attach_5;
 	}
-	public void setBbd_attach_5(String bbd_attach_5) {
+	public void setBbd_attach_5(MultipartFile bbd_attach_5) {
 		this.bbd_attach_5 = bbd_attach_5;
 	}
 	
@@ -123,6 +126,12 @@ public class Board {
 	}
 	public void setTotal_views(Long total_views) {
 		this.total_views = total_views;
+	}
+	public Long getBbd_attach_length() {
+		return bbd_attach_length;
+	}
+	public void setBbd_attach_length(Long bbd_attach_length) {
+		this.bbd_attach_length = bbd_attach_length;
 	}
 
 

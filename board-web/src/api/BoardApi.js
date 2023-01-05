@@ -1,34 +1,52 @@
-import { createSchedulerInstance } from "@/api/Ingerceptors";
+import { createInstance } from "@/api/Ingerceptors";
+import axios from "axios";
 
-const instance = createSchedulerInstance();
+const instance = createInstance();
 
-class SchedulerApi{
+class BoardApi{
     URL = '/bbd'
 
     totalBoard(){
-        return instance.get(this.URL + '/total')
+        return axios.get(this.URL + '/total')
                 .then((response)=>response.data)
     }
 
     questionList(){
-        return instance.get(this.URL + '/questions')
+        return axios.get(this.URL + '/questions')
                 .then((response)=>response.data);
     }
 
     answerList(id){
-        return instance.get(this.URL + `/answers/${id}`)
+        return axios.get(this.URL + `/answers/${id}`)
                 .then((response)=>response.data);
     }
 
     searchList(searchWord, value){
-        return instance.get(this.URL + `/boards/${searchWord}`, 
+        return axios.get(this.URL + `/boards/${searchWord}`, 
         {params:{
             value: value
         }})
     }
 
     questionCreate(board){
-        return instance.post(this.URL + '/question', {...board})
+        const formData = new FormData();
+
+        formData.append('reg_writer', board.reg_writer);
+        formData.append('bbd_title', board.bbd_title);
+        formData.append('bbd_content', board.bbd_content);
+        formData.append('bbd_password', board.bbd_password);
+        formData.append('inq_security_yn', board.inq_security_yn);
+        formData.append('bbd_attach_length', board.files.length);
+
+        if(board.files.length > 0){
+            for(let i=0; i<board.files.length; i++){
+                const image = board.files[i];
+                formData.append(`bbd_attach_${i+1}`, image);
+            }
+        }
+
+        console.log(...formData);
+        return instance.post(this.URL + '/question', formData)
                 .then((response)=>response.data)
     }
 
@@ -38,7 +56,7 @@ class SchedulerApi{
     }
 
     boardDelete(bbdId, ansId){
-        return instance.delete(this.URL + `/board/${bbdId}`, 
+        return axios.delete(this.URL + `/board/${bbdId}`, 
                 { params:{
                     bbdId: bbdId, 
                     ansId: ansId 
@@ -47,12 +65,12 @@ class SchedulerApi{
     }
 
     boardEdit(bbdId, board){
-        return instance.put(this.URL + `/board/${bbdId}`, {...board})
+        return axios.put(this.URL + `/board/${bbdId}`, {...board})
                 .then((response)=>response.data)
     }
 
     boardDetail(bbdId, ansId){
-        return instance.get(this.URL + `/board/${bbdId}`,
+        return axios.get(this.URL + `/board/${bbdId}`,
         { params:{
             bbdId: bbdId, 
             ansId: ansId 
@@ -61,7 +79,7 @@ class SchedulerApi{
     }
 
     boardView(bbdId, ansId){
-        return instance.put(this.URL + '/board/view', null,
+        return axios.put(this.URL + '/board/view', null,
         { params:{
             bbdId: bbdId, 
             ansId: ansId 
@@ -70,9 +88,14 @@ class SchedulerApi{
     }
 
     boardStatus(date){
-        return instance.get(this.URL + `/board/status/${date}`)
+        return axios.get(this.URL + `/status/${date}`)
+                .then((response)=>response.data)
+    }
+
+    statusGenerate(date){
+        return axios.get(this.URL + `/generate/${date}`)
                 .then((response)=>response.data)
     }
 }
 
-export default new SchedulerApi();
+export default new BoardApi();

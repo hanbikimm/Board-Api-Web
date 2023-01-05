@@ -82,7 +82,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 	@Override
 	public List<BoardStatus> getChart(List<String> week) {
 		String sql = "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, 'ø˘' AS day,\r\n"
+				+ "        ? AS prc_date, 'Ïõî' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -90,13 +90,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, '»≠' AS day,\r\n"
+				+ "        ? AS prc_date, 'Ìôî' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -104,13 +104,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, 'ºˆ' AS day,\r\n"
+				+ "        ? AS prc_date, 'Ïàò' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -118,13 +118,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, '∏Ò' AS day,\r\n"
+				+ "        ? AS prc_date, 'Î™©' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -132,13 +132,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, '±›' AS day,\r\n"
+				+ "        ? AS prc_date, 'Í∏à' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -146,13 +146,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, '≈‰' AS day,\r\n"
+				+ "        ? AS prc_date, 'ÌÜ†' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -160,13 +160,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "UNION\r\n"
 				+ "(SELECT  IFNULL(MAX(ans_seq), '1') AS null_YN, \r\n"
-				+ "        ? AS prc_date, '¿œ' AS day,\r\n"
+				+ "        ? AS prc_date, 'Ïùº' AS day,\r\n"
 				+ "        IFNULL((SELECT SUM(a.day_views) FROM t_inq_cnt a WHERE a.inq_date = ?), 0) AS sum_day_views,\r\n"
 				+ "        IFNULL((SELECT SUM(b.day_writes)  FROM t_ans_cnt b  WHERE b.write_date = ?), 0) AS sum_day_writes, \r\n"
 				+ "        IFNULL((SELECT c.bbd_seq FROM t_inq_cnt c  WHERE c.inq_date = ? ORDER BY c.day_views DESC LIMIT 1), 0) AS inq_bbd_seq,\r\n"
@@ -174,42 +174,45 @@ public class BoardRepositoryImpl implements BoardRepository {
 				+ "        IFNULL((SELECT e.bbd_seq FROM t_ans_cnt e  WHERE e.write_date <= ? ORDER BY e.ans_seq DESC LIMIT 1), 0) AS write_bbd_seq,\r\n"
 				+ "        0 AS write_ans_seq,\r\n"
 				+ "        IFNULL((SELECT f.bbd_title FROM t_bbd f WHERE f.bbd_seq = inq_bbd_seq AND f.ans_seq = inq_ans_seq), '-') AS inq_top_title,\r\n"
-				+ "        IFNULL((SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
+				+ "        IF(date_format(NOW(), '%Y-%m-%d') >= ?, (SELECT g.bbd_title FROM t_bbd g WHERE g.bbd_seq = write_bbd_seq AND g.ans_seq = write_ans_seq), '-') AS write_top_title\r\n"
 				+ "FROM t_inq_cnt \r\n"
 				+ "WHERE inq_date = ?\r\n"
 				+ "ORDER BY day_views DESC, bbd_seq, ans_seq  LIMIT 1)\r\n"
 				+ "";
 		return jdbcTemplate.query(sql, chartListMapper(),
-				week.get(0), week.get(0), week.get(0), week.get(0), week.get(0), week.get(0), week.get(0),
-				week.get(1), week.get(1), week.get(1), week.get(1), week.get(1), week.get(1), week.get(1),
-				week.get(2), week.get(2), week.get(2), week.get(2), week.get(2), week.get(2), week.get(2),
-				week.get(3), week.get(3), week.get(3), week.get(3), week.get(3), week.get(3), week.get(3),
-				week.get(4), week.get(4), week.get(4), week.get(4), week.get(4), week.get(4), week.get(4),
-				week.get(5), week.get(5), week.get(5), week.get(5), week.get(5), week.get(5), week.get(5),
-				week.get(6), week.get(6), week.get(6), week.get(6), week.get(6), week.get(6), week.get(6));
+				week.get(0), week.get(0), week.get(0), week.get(0), week.get(0), week.get(0), week.get(0), week.get(0),
+				week.get(1), week.get(1), week.get(1), week.get(1), week.get(1), week.get(1), week.get(1), week.get(1),
+				week.get(2), week.get(2), week.get(2), week.get(2), week.get(2), week.get(2), week.get(2), week.get(2),
+				week.get(3), week.get(3), week.get(3), week.get(3), week.get(3), week.get(3), week.get(3), week.get(3),
+				week.get(4), week.get(4), week.get(4), week.get(4), week.get(4), week.get(4), week.get(4), week.get(4),
+				week.get(5), week.get(5), week.get(5), week.get(5), week.get(5), week.get(5), week.get(5), week.get(5),
+				week.get(6), week.get(6), week.get(6), week.get(6), week.get(6), week.get(6), week.get(6), week.get(6));
 	}
 	
 	@Override
 	public Board postQuestion(Board board) {
-		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, ?, null, null, null, null, ?, ?)";
-		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_attach_1(), board.getBbd_password(), board.getInq_security_yn());
+		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), 
+				board.getBbd_attach_1(), board.getBbd_attach_2(), board.getBbd_attach_3(), board.getBbd_attach_4(), board.getBbd_attach_5(),
+				board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
 	
 	@Override
 	public Board postAnswer(Board board) {
-		String sql = "INSERT INTO t_bbd VALUES (?, (select IFNULL(MAX(ans_seq) + 1, 1) FROM t_bbd b WHERE b.bbd_seq=?), now(), ?, ?, ?, ?, null, null, null, null, ?, ?)";
-		jdbcTemplate.update(sql, board.getBbd_seq(), board.getBbd_seq(),  board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_attach_1(), board.getBbd_password(), board.getInq_security_yn());
+		String sql = "INSERT INTO t_bbd VALUES (?, (select IFNULL(MAX(ans_seq) + 1, 1) FROM t_bbd b WHERE b.bbd_seq=?), now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		jdbcTemplate.update(sql, board.getBbd_seq(), board.getBbd_seq(),  board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), 
+				board.getBbd_attach_1(), board.getBbd_attach_2(), board.getBbd_attach_3(), board.getBbd_attach_4(), board.getBbd_attach_5(),
+				board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
 	
-	//transaction √≥∏Æ «ÿæﬂ«‘
 	@Override
 	public String deleteBoard(Long bbdId, Long ansId) {		
 		jdbcTemplate.update("DELETE FROM t_bbd WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
 		jdbcTemplate.update("DELETE FROM t_inq_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
 		jdbcTemplate.update("DELETE FROM t_ans_cnt WHERE bbd_seq=? AND ans_seq=?", bbdId, ansId);
-		return "∞‘Ω√±€¿ª ªË¡¶«ﬂΩ¿¥œ¥Ÿ.";
+		return "ÏÑ±Í≥µÏ†ÅÏúºÎ°ú ÏÇ≠Ï†úÎêòÏóàÏäµÎãàÎã§.";
 	}
 
 
@@ -222,14 +225,14 @@ public class BoardRepositoryImpl implements BoardRepository {
 		return board;
 	}
 	
-	// ¥‰∫Ø ¿÷¿∏∏È ¡˙πÆ¿ª ¡ˆøÔ ºˆ æ¯¿Ω
+	// ÏÇ≠Ï†ú Ï†Ñ ÎãµÎ≥Ä Ïú†Î¨¥ ÌôïÏù∏
 	@Override
 	public int checkAnswersForDelete(Long bbdId) {
 		return jdbcTemplate.queryForObject("SELECT count(*) FROM t_bbd \r\n"
 				+ "WHERE bbd_seq=? AND ans_seq>0", Integer.class, bbdId);
 	};
 
-	// ¿€º∫»Ωºˆ++ Ω√ø° ¿ÃπÃ ¿÷¥¬ æ∆¿Ãµ¿Œ¡ˆ »Æ¿Œ«œ±‚
+	// ÏûëÏÑ±Ïàò++ Ï†Ñ ÏûëÏÑ± Í∏∞Î°ù Ïú†Î¨¥ ÌôïÏù∏
 	@Override
 	public int checkWrite() {
 		return jdbcTemplate.queryForObject("SELECT count(*) FROM t_ans_cnt WHERE write_date=DATE_FORMAT(NOW(), '%Y-%m-%d') \\r\\n"

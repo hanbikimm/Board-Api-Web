@@ -20,22 +20,21 @@
 
             <td 
             @click="goToBoard(statusItem.bbdIdOfFirstView, statusItem.ansIdOfFirstView)"
-            :class="[statusItem.ansIdOfFirstView > 0 ? 'seperate-answer' : 'text-gray-500', statusItem.bbdIdOfFirstView == 0 ? '': 'cursor-pointer']"
+            :class="[statusItem.bbdIdOfFirstView == 0 ? '': 'cursor-pointer', statusItem.ansIdOfFirstView > 0 ? 'seperate-answer' : 'text-gray-500']"
             class="px-6 py-4 text-sm leading-5  border-b border-gray-200 whitespace-nowrap">
                 {{ statusItem.bbdTitleOfFirstView }}
             </td>
 
             <td 
             @click="goToBoard(statusItem.bbdIdOfFirstAnswer, statusItem.ansIdOfFirstAnswer)"
-            :class="[checkDate == '-' ? '': 'cursor-pointer']"
+            :class="[statusItem.bbdTitleOfFirstAnswer == '-' ? '': 'cursor-pointer']"
             class="px-6 py-4 text-sm leading-5 text-gray-500 border-b border-gray-200 whitespace-nowrap">
-                {{ checkDate }}
+                {{ statusItem.bbdTitleOfFirstAnswer }}
             </td>
         </tr>
     </tbody>
 </template>
 <script>
-import moment from 'moment';
 import BoardApi from '@/api/BoardApi';
 
 export default {
@@ -46,18 +45,10 @@ export default {
             required:true,
         }
     },
-    computed:{
-        checkDate(){
-            let timeDiff = moment(this.statusItem.date).fromNow().slice(0,2)
-            if(timeDiff == 'in'){
-                return '-';
-            }
-            return this.statusItem.bbdTitleOfFirstAnswer;
-        }
-    },
+
     methods:{
         goToBoard(bbdId, ansId){
-            if (bbdId > 0 && this.checkDate != '-') {
+            if (bbdId > 0 && this.statusItem.bbdTitleOfFirstAnswer != '-') {
                 if (ansId == 0) {
                     this.updateView(bbdId, ansId);
                     this.$router.push({

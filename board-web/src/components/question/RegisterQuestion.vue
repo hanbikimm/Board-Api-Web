@@ -36,61 +36,72 @@
           </div>
 
           <!--Body-->
-          <div>
-              <div class="mt-3">
-                <label class="text-gray-700 ml-2">
-                    작성자
-                </label>
-                <input
-                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                  type="text"
-                  v-model="board.reg_writer"/>
-
-                <label class="text-gray-700 ml-2">
-                    제목
-                </label>
-                <input
-                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                  type="text"
-                  v-model="board.bbd_title"/>
-
-                <label class="text-gray-700 ml-2">
-                  내용
-                </label>
-                <textarea id="message" rows="10"
-                  v-model="board.bbd_content"
-                  class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
-
-                <label class="text-gray-700 ml-2">
-                    첨부 (선택)
-                </label>
-                <input
-                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                  type="file" multiple accept="image/*" @change="fileChange"/>
-                  <p v-for="file in this.files" :key="file.name">
-                    {{file.name}} ({{file.size}}) / {{file.type}}
-                  </p>
-
-                <label class="text-gray-700 ml-2">
-                    비밀번호 (4자리 숫자)
-                </label>
-                <input
-                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                  type="password"
-                  v-model="board.bbd_password"/>
-
-                <input class="ml-2 border border-gray-300"
-                  type="checkbox"
-                  v-model="board.inq_security_yn"/>
-                <label class="text-gray-700 ml-2">
-                  조회 보안
-                </label>
-              </div>
-              
+          <div class="mt-3">
+            <div>
+              <label class="text-gray-700 ml-2">
+                작성자
+              </label>
+              <input
+                class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                type="text"
+                v-model="board.reg_writer"/>
+            </div>
+            
+            <div class="mt-2">
+              <label class="text-gray-700 ml-2">
+                제목
+              </label>
+              <input
+                class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                type="text"
+                v-model="board.bbd_title"/>
+            </div>
+            
+            <div class="mt-2">
+              <label class="text-gray-700 ml-2">
+                내용
+              </label>
+              <textarea id="message" rows="10"
+                v-model="board.bbd_content"
+                class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
             </div>
 
+            <div class="mt-2">
+              <label class="text-gray-700 ml-2">
+                (선택) 첨부
+              </label>
+              <input
+                class="block w-full p-1"
+                type="file" @change="addFile()" ref="boardImage" accept="image/*" />
+                <p v-for="file in this.board.files" :key="file.name">
+                  &nbsp;- {{file.name}} &nbsp;
+                  <button @click="deleteFile(this.board.files.indexOf(file))" class="font-bold">X</button>
+                </p>
+            </div>
+
+            <div class="mt-2">
+              <label class="text-gray-700 ml-2">
+                  비밀번호 (4자리 숫자)
+              </label>
+              <input
+                class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                type="password"
+                v-model="board.bbd_password"/>
+            </div>
+
+            <div class="mt-2">
+              <input class="ml-2 border border-gray-300"
+                type="checkbox"
+                v-model="board.inq_security_yn"/>
+              <label class="text-gray-700 ml-2">
+                조회 보안
+              </label>
+            </div>
+          </div>
+        </div>
+
           <!--Footer-->
-          <div class="flex justify-end pt-7">
+          <div class="flex justify-end m-5">
             <button
               @click="itemsCheck()"
               class="px-6 py-3 text-white bg-blue-700 hover:bg-blue-600 focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-lg text-sm text-center dark:bg-blue-600 dark:hover:bg-blue-700 dark:focus:ring-blue-800">
@@ -102,7 +113,6 @@
               취소
             </button>
           </div>
-        </div>
       </div>
     </div>
   </div>
@@ -123,67 +133,55 @@ export default {
 
             board:{
               ans_seq: 0,
+              files:[],
             },
 
-            files:[]
+            
+
+            
         }
     },
 
     methods: {
-      fileChange(e) {
-        var input = e.target; 
-        if (input.files && input.files[0]) { 
-              var reader = new FileReader(); 
-              console.log(e.target.files)
-              reader.onload = (e) => { 
-              this.files.push(e.target.result);      
-          }; 
-          reader.readAsDataURL(input.files[0]); 
-          e.target.value =''; // 있어야 같은 파일 지웠다가 다시 올릴수 있음.
+      addFile() {
+        if (this.board.files.length < 5) {
+          this.board.files.push(this.$refs.boardImage.files[0]);
+        }else {
+          alert('사진은 5개까지만 등록이 가능합니다!');
         }
-          let validation = true;
-          let message = '';
-
-          if (this.files.length > 5) {
-            validation= false;
-            alert('파일은 5개만 등록 가능합니다.');
-          }
-
-          if (validation) {
-              this.file = this.files;
-          }else {
-              this.file = '';
-              alert(message);
-          }
       },
-        itemsCheck(){
-          if(this.board.reg_writer == null || this.board.bbd_title == null || 
-              this.board.bbd_content == null || this.board.bbd_password == null){
-                    alert("항목을 다 입력했는지 확인해주세요!")
-              } else if(Validation.passwordNum(this.board.bbd_password) == false){
-                alert('비밀번호는 4자리 숫자입니다.')
-              } else{
-                  if(this.board.inq_security_yn == true){
-                    this.board.inq_security_yn = 'y';
-                  } else{
-                    this.board.inq_security_yn = 'n';
-                  }
-                  this.registerQuestion();
-              }   
-                
-        },
 
-        async registerQuestion(){
-          try {
-            await BoardApi.questionCreate(this.board);
-            alert("게시글 등록이 완료되었습니다!");
-            this.$router.go();
+      deleteFile(index){
+        this.board.files.splice(index, 1);
+      },
 
-          } catch (error) {
-            console.log(error);
-          }
-          
+      itemsCheck(){
+        if(this.board.reg_writer == null || this.board.bbd_title == null || 
+            this.board.bbd_content == null || this.board.bbd_password == null){
+                  alert("항목을 다 입력했는지 확인해주세요!")
+            } else if(Validation.passwordNum(this.board.bbd_password) == false){
+              alert('비밀번호는 4자리 숫자입니다.')
+            } else{
+                if(this.board.inq_security_yn == true){
+                  this.board.inq_security_yn = 'y';
+                } else{
+                  this.board.inq_security_yn = 'n';
+                }
+                this.registerQuestion();
+            } 
+      },
+
+      async registerQuestion(){
+        try {
+          await BoardApi.questionCreate(this.board);
+          alert("게시글 등록이 완료되었습니다!");
+          this.$router.go();
+
+        } catch (error) {
+          console.log(error);
         }
+        
+      }
     }
 }
 </script>

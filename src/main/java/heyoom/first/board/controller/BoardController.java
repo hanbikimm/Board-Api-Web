@@ -3,7 +3,9 @@ package heyoom.first.board.controller;
 import java.util.List;
 import java.util.Optional;
 
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,77 +32,72 @@ public class BoardController {
 		this.boardService = boardService;
 	 }
 	
-	// ÃÑ °Ô½Ã±Û °¹¼ö
+	// ì´ ê²Œì‹œë¬¼ ìˆ˜
 	@GetMapping(value="/total")
 	public int totalBoard() {
 		return boardService.getTotal();
 	}
 	
-	// Áú¹® ¸ñ·Ï
+	// ì§ˆë¬¸ ëª©ë¡
 	@GetMapping(value="/questions")
 	@ResponseBody
 	public List<Board> questionList() {
 		return boardService.getQuestionList();
 	}
 	
-	// ´ñ±Û ¸ñ·Ï
+	// ë‹µë³€ ëª©ë¡
 	@GetMapping(value="/answers/{id}")
 	public List<Board> answerList(@PathVariable Long id){
 		return boardService.getAnswerList(id);
 	}
 	
-	// °Ô½Ã±Û °Ë»ö
+	// ê²€ìƒ‰ ëª©ë¡
 	@GetMapping(value="/boards/{searchWord}")
 	public List<Board> searchBoard(@PathVariable("searchWord") String searchWord, Long value){
 		return boardService.getSearchList(searchWord, value);
 	}
 	
-	// Áú¹® µî·Ï
-	@PostMapping(value="/question")
-	public Board registeQuestion(@RequestBody Board board) {
+	// ì§ˆë¬¸ ë“±ë¡
+	@PostMapping(value="/question", consumes = {MediaType.MULTIPART_FORM_DATA_VALUE})
+	public Board registeQuestion(@RequestPart Board board) {
 		return boardService.createQuestion(board);
 	}
 	
-	// ´äº¯ µî·Ï
+	// ë‹µë³€ ë“±ë¡
 	@PostMapping(value="/answer")
 	public Board registerAnswer(@RequestBody Board board) {
 		return boardService.createAnswer(board);
 	}
 	
-	// °Ô½Ã±Û »ó¼¼
+	// ê²Œì‹œê¸€ ìƒì„¸
 	@GetMapping(value="board/{bbdId}")
 	public Optional<Board> boardDetail(@PathVariable("bbdId") Long bbdId, Long ansId) {
 		return boardService.getBoardDetail(bbdId, ansId);
 	}
 	
-	// °Ô½Ã±Û ¼öÁ¤
+	// ê²Œì‹œê¸€ ìˆ˜ì •
 	@PutMapping(value="/board/{id}")
 	public Board ModifyBoard(@PathVariable Long id, @RequestBody Board board) {
 		return boardService.editBoard(board);
 	}
 	
-	// °Ô½Ã±Û »èÁ¦
+	// ê²Œì‹œê¸€ ì‚­ì œ
 	@DeleteMapping(value="board/{bbdId}")
 	public String removeBoard(@PathVariable("bbdId") Long bbdId, Long ansId) {
 		return boardService.eraseBoard(bbdId, ansId);
 	}
 	
-	//Á¶È¸¼ö ±â´É
+	// ì¡°íšŒìˆ˜
 	@PutMapping(value="board/view")
 	public String updateView(Long bbdId, Long ansId) {
 		return boardService.updateDayViews(bbdId, ansId);
 	}
 	
-	//ÇöÈ²ÆÇ µ¥ÀÌÅÍ
-	@GetMapping(value="board/status/{date}")
+	// í˜„í™©íŒ
+	@GetMapping(value="status/{date}")
 	public List<BoardStatus> statusOfBoard(@PathVariable("date") String date){
 		return boardService.getStatus(date);
 	}
-	
-	
-	
-	
-	
 	
 
 }
