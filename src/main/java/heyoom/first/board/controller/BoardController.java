@@ -126,17 +126,6 @@ public class BoardController {
 		return ResponseEntity.ok()
 				.header(HttpHeaders.CONTENT_DISPOSITION, contentDisposition)
 				.body(urlResource);
-		
-//		HttpHeaders headers = new HttpHeaders();
-//		headers.set(HttpHeaders.CONTENT_DISPOSITION, "inline;filename=" + fileName);
-//        File file = new File(fileDir + fileDate + "/" + boardId + "/" + fileName);
-//        log.info("fullPath= {}", fileDir + fileDate + "/" + boardId + "/" + fileName);
-//        InputStreamResource resource = new InputStreamResource(new FileInputStream(file));
-//
-//        return ResponseEntity.ok()
-//                .headers(headers)
-//                .contentType(MediaType.IMAGE_JPEG)
-//                .body(resource);
 	}
 	
 	// 게시글 수정
