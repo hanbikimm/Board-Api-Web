@@ -14,13 +14,15 @@ public interface BoardRepository {
 	List<Board> getBoardsOfWriter(String searchWord);
 	Optional<Board> getBoard(Long bbdId, Long ansId);
 	int getTotalBoards();
+	Optional<Board> getBoardId(String title);
 	List<BoardStatus> getChart(List<String> week);
+	String postImg(String fullPath, Long img_seq, String bbd_title);
 	Board postQuestion(Board board);
 	Board postAnswer(Board board);
 	String deleteBoard(Long bbdId, Long ansId);
 	Board updateBoard(Board board);
 	int checkAnswersForDelete(Long bbdId);
-	int checkWrite();
+	int checkWrite(Long bbdId, Long ansId);
 	int checkView(Long bbdId, Long ansId);
 	String plusView(Long bbdId, Long ansId, int count);
 	String plusWrite(Long bbdId, Long ansId);

@@ -3,7 +3,7 @@ CREATE TABLE IF NOT EXISTS t_bbd (
     ans_seq NUMERIC(10,0) NOT NULL DEFAULT '0',
     reg_datetime DATETIME NOT NULL,
     reg_writer VARCHAR(260) NOT NULL,
-    bbd_title VARCHAR(300) NOT NULL,
+    bbd_title VARCHAR(300) NOT NULL UNIQUE KEY,
     bbd_content TEXT(10000) NOT NULL,
     bbd_attach_1 TEXT(500),
     bbd_attach_2 TEXT(500), 

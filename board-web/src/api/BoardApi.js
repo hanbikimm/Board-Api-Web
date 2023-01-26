@@ -28,30 +28,23 @@ class BoardApi{
         }})
     }
 
-    questionCreate(board){
-        const formData = new FormData();
-
-        formData.append('reg_writer', board.reg_writer);
-        formData.append('bbd_title', board.bbd_title);
-        formData.append('bbd_content', board.bbd_content);
-        formData.append('bbd_password', board.bbd_password);
-        formData.append('inq_security_yn', board.inq_security_yn);
-        formData.append('bbd_attach_length', board.files.length);
-
-        if(board.files.length > 0){
-            for(let i=0; i<board.files.length; i++){
-                const image = board.files[i];
-                formData.append(`bbd_attach_${i+1}`, image);
-            }
-        }
-
-        console.log(...formData);
-        return instance.post(this.URL + '/question', formData)
+    postQuestion(board){
+        return axios.post(this.URL + '/question/contents', {...board})
                 .then((response)=>response.data)
     }
 
-    answerCreate(board){
-        return instance.post(this.URL + '/answer', {...board})
+    postFile(formData){
+        return instance.post(this.URL + '/board/file', formData)
+                .then((response)=>response.data)
+    }
+
+    downloadFile(date, boardId, fileName){
+        return axios.get(this.URL + `/attach/${date}/${boardId}/${fileName}`)
+                .then((response)=>response.data)
+    }
+
+    postAnswer(board){
+        return axios.post(this.URL + '/answer/contents', {...board})
                 .then((response)=>response.data)
     }
 

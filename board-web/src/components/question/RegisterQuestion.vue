@@ -1,7 +1,7 @@
 <template>
 <div>
     <div>
-      <div class="mx-2 flex justify-end">
+      <div class="mx-2 flex justify-start">
         <button
           @click="open = true"
           class="block font-medium rounded-lg text-sm px-5 py-2.5 text-center text-white bg-blue-700 hover:bg-blue-800 focus:outline-none">
@@ -37,15 +37,29 @@
 
           <!--Body-->
           <div class="mt-3">
-            <div>
-              <label class="text-gray-700 ml-2">
-                작성자
-              </label>
-              <input
-                class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                type="text"
-                v-model="board.reg_writer"/>
+            <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+              <div>
+                <label class="text-gray-700 ml-2">
+                  작성자
+                </label>
+                <input
+                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                  type="text"
+                  v-model="board.reg_writer"/>
+              </div>
+
+              <div>
+                <label class="text-gray-700 ml-2">
+                    비밀번호 (4자리 숫자)
+                </label>
+                <input
+                  class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
+                  type="password"
+                  v-model="board.bbd_password"/>
+              </div>
+              
             </div>
+            
             
             <div class="mt-2">
               <label class="text-gray-700 ml-2">
@@ -71,22 +85,12 @@
                 (선택) 첨부
               </label>
               <input
-                class="block w-full p-1"
-                type="file" @change="addFile()" ref="boardImage" accept="image/*" />
-                <p v-for="file in this.board.files" :key="file.name">
+                class="block w-full p-1 rounded-md border border-gray-300 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                type="file" @change="addFile()" ref="boardImage" />
+                <p v-for="file in this.files" :key="file.name">
                   &nbsp;- {{file.name}} &nbsp;
-                  <button @click="deleteFile(this.board.files.indexOf(file))" class="font-bold">X</button>
+                  <button @click="deleteFile(this.files.indexOf(file))" class="font-bold">X</button>
                 </p>
-            </div>
-
-            <div class="mt-2">
-              <label class="text-gray-700 ml-2">
-                  비밀번호 (4자리 숫자)
-              </label>
-              <input
-                class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                type="password"
-                v-model="board.bbd_password"/>
             </div>
 
             <div class="mt-2">
@@ -124,6 +128,7 @@ import BoardApi from '@/api/BoardApi';
 import Validation from '@/assets/Validation';
 
 
+
 export default {
     name: 'registerQuestion',
 
@@ -133,26 +138,23 @@ export default {
 
             board:{
               ans_seq: 0,
-              files:[],
             },
 
-            
-
-            
+            files:[],       
         }
     },
 
     methods: {
       addFile() {
-        if (this.board.files.length < 5) {
-          this.board.files.push(this.$refs.boardImage.files[0]);
+        if (this.files.length < 5) {
+          this.files.push(this.$refs.boardImage.files[0]);
         }else {
           alert('사진은 5개까지만 등록이 가능합니다!');
         }
       },
 
       deleteFile(index){
-        this.board.files.splice(index, 1);
+        this.files.splice(index, 1);
       },
 
       itemsCheck(){
@@ -173,15 +175,25 @@ export default {
 
       async registerQuestion(){
         try {
-          await BoardApi.questionCreate(this.board);
-          alert("게시글 등록이 완료되었습니다!");
-          this.$router.go();
-
+          await BoardApi.postQuestion(this.board);
+          if(this.files.length > 0){
+            let i = 1;
+            for await (let file of this.files) {
+              const formData = new FormData();
+              formData.append('bbd_title', this.board.bbd_title);
+              formData.append('img_seq', i);
+              formData.append('img', file);
+              BoardApi.postFile(formData);
+              i = ++i;
+            }
+            alert('게시글이 등록되었습니다.');
+            this.$router.go();
+          }
         } catch (error) {
           console.log(error);
         }
         
-      }
+      },
     }
 }
 </script>

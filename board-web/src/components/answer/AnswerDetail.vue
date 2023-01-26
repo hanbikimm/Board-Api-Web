@@ -27,7 +27,27 @@
             </div>
             <div >
                 <p class="mt-4 content">{{ this.answer.bbd_content }}</p>
-                <p>{{ this.answer.bbd_attach_1 }}</p>
+
+                <button v-if="this.load.file_1 != ''" @click="downloadFile(this.load.file_1)"
+                class="mt-4 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_1 }}
+                </button>
+                <button v-if="this.load.file_2 != ''" @click="downloadFile(this.load.file_2)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_2 }}
+                </button>
+                <button v-if="this.load.file_3 != ''" @click="downloadFile(this.load.file_3)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_3 }}
+                </button>
+                <button v-if="this.load.file_4 != ''" @click="downloadFile(this.load.file_4)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_4 }}
+                </button>
+                <button v-if="this.load.file_5 != ''" @click="downloadFile(this.load.file_5)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_5 }}
+                </button>
                 <hr class="mt-4"/>
             </div>
 
@@ -62,7 +82,14 @@ export default {
     data() {
         return {
             open: false,
-            answer: {}
+            answer: {},
+            load:{
+                file_1: '',
+                file_2: '',
+                file_3: '',
+                file_4: '',
+                file_5: '',
+            }
         };
     },
 
@@ -71,10 +98,35 @@ export default {
             this.$router.go(-1);
         },
 
+        downloadFile(fileName){
+            try {
+                const date = this.answer.reg_datetime.slice(0,10);
+                const boardId = `${this.answer.bbd_seq}-${this.answer.ans_seq}`;
+                window.open(`http://localhost:8000/bbd/attach/${date}/${boardId}/${fileName}`);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         async getAnswerDetail(){
             try{
                 const data = await BoardApi.boardDetail(this.$route.params.bbdId, this.$route.params.ansId);
                 this.answer = data;
+                if(this.answer.bbd_attach_1 != null){
+                    this.load.file_1 = this.answer.bbd_attach_1.substring(42, this.answer.bbd_attach_1.length);
+                    if(this.answer.bbd_attach_2 != null){
+                        this.load.file_2 = this.answer.bbd_attach_2.substring(42, this.answer.bbd_attach_2.length);
+                        if(this.answer.bbd_attach_3 != null){
+                            this.load.file_3 = this.answer.bbd_attach_3.substring(42, this.answer.bbd_attach_3.length);
+                            if(this.answer.bbd_attach_4 != null){
+                                this.load.file_4 = this.answer.bbd_attach_4.substring(42, this.answer.bbd_attach_4.length);
+                                if(this.answer.bbd_attach_5 !=null){
+                                    this.load.file_5 = this.answer.bbd_attach_5.substring(42, this.answer.bbd_attach_5.length);
+                                }
+                            }
+                        }
+                    }
+                }
             }catch(error){
                 console.log(error);
             }

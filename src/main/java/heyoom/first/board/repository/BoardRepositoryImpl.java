@@ -47,6 +47,12 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 	
 	@Override
+	public Optional<Board> getBoardId(String title) {
+		List<Board> result = jdbcTemplate.query("SELECT bbd_seq, ans_seq FROM t_bbd WHERE bbd_title =?", boardIdMapper(), title);
+		return result.stream().findAny();
+	}
+	
+	@Override
 	public List<Board> getBoardsOfTitle(String searchWord) {
 		String sql = "SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
 				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
@@ -73,7 +79,7 @@ public class BoardRepositoryImpl implements BoardRepository {
 	public Optional<Board> getBoard(Long bbdId, Long ansId) {
 		List<Board> result = jdbcTemplate.query("SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, "
 				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count, "
-				+ "a.reg_writer, a.reg_datetime, a.bbd_content, a.bbd_attach_1, a.bbd_password, "
+				+ "a.reg_writer, a.reg_datetime, a.bbd_content, a.bbd_attach_1, a.bbd_attach_2, a.bbd_attach_3, a.bbd_attach_4, a.bbd_attach_5, a.bbd_password, "
 				+ "IFNULL((SELECT SUM(day_views) FROM bbd.t_inq_cnt WHERE bbd_seq = a.bbd_seq and ans_seq =a.ans_seq), 0) AS total_views "
 				+ "FROM bbd.t_bbd a WHERE a.bbd_seq=? AND a.ans_seq=?", boardMapper(), bbdId, ansId);
 		return result.stream().findAny();
@@ -190,19 +196,22 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 	
 	@Override
+	public String postImg(String fullPath, Long img_seq, String bbd_title) {
+		jdbcTemplate.update("UPDATE t_bbd SET bbd_attach_" + img_seq +  "=? WHERE bbd_title=?", fullPath, bbd_title);
+		return "bbd_attach_" + img_seq + " fullPath 업로드 성공";
+	}
+	
+	@Override
 	public Board postQuestion(Board board) {
-		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
-		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), 
-				board.getBbd_attach_1(), board.getBbd_attach_2(), board.getBbd_attach_3(), board.getBbd_attach_4(), board.getBbd_attach_5(),
-				board.getBbd_password(), board.getInq_security_yn());
+		String sql = "INSERT INTO t_bbd VALUES ((select IFNULL(MAX(bbd_seq) + 1, 1) FROM t_bbd b), 0, now(), ?, ?, ?, null, null, null, null, null, ?, ?)";
+		jdbcTemplate.update(sql, board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
 	
 	@Override
 	public Board postAnswer(Board board) {
-		String sql = "INSERT INTO t_bbd VALUES (?, (select IFNULL(MAX(ans_seq) + 1, 1) FROM t_bbd b WHERE b.bbd_seq=?), now(), ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)";
+		String sql = "INSERT INTO t_bbd VALUES (?, (select IFNULL(MAX(ans_seq) + 1, 1) FROM t_bbd b WHERE b.bbd_seq=?), now(), ?, ?, ?, null, null, null, null, null, ?, ?)";
 		jdbcTemplate.update(sql, board.getBbd_seq(), board.getBbd_seq(),  board.getReg_writer(), board.getBbd_title(), board.getBbd_content(), 
-				board.getBbd_attach_1(), board.getBbd_attach_2(), board.getBbd_attach_3(), board.getBbd_attach_4(), board.getBbd_attach_5(),
 				board.getBbd_password(), board.getInq_security_yn());
 		return board;
 	}
@@ -234,9 +243,9 @@ public class BoardRepositoryImpl implements BoardRepository {
 
 	// 작성수++ 전 작성 기록 유무 확인
 	@Override
-	public int checkWrite() {
+	public int checkWrite(Long bbdId, Long ansId) {
 		return jdbcTemplate.queryForObject("SELECT count(*) FROM t_ans_cnt WHERE write_date=DATE_FORMAT(NOW(), '%Y-%m-%d') \\r\\n"
-				+ "AND bbd_seq=? AND ans_seq=?", Integer.class);
+				+ "AND bbd_seq=? AND ans_seq=?", Integer.class, bbdId, ansId);
 	}
 	
 	@Override
@@ -306,6 +315,11 @@ public class BoardRepositoryImpl implements BoardRepository {
 			board.setBbd_title(rs.getString("bbd_title"));
 			board.setBbd_content(rs.getString("bbd_content"));
 			board.setBbd_password(Seed.decrypt(rs.getString("bbd_password")));
+			board.setBbd_attach_1(rs.getString("bbd_attach_1"));
+			board.setBbd_attach_2(rs.getString("bbd_attach_2"));
+			board.setBbd_attach_3(rs.getString("bbd_attach_3"));
+			board.setBbd_attach_4(rs.getString("bbd_attach_4"));
+			board.setBbd_attach_5(rs.getString("bbd_attach_5"));
 			board.setInq_security_yn(rs.getString("inq_security_yn"));
 			board.setAnswer_count(rs.getLong("answer_count"));
 			board.setTotal_views(rs.getLong("total_views"));
@@ -345,6 +359,15 @@ public class BoardRepositoryImpl implements BoardRepository {
 			status.setBbdTitleOfFirstAnswer(rs.getString("write_top_title"));
 			
 			return status;
+		};
+	}
+	
+	private RowMapper<Board> boardIdMapper(){
+		return (rs, rowNum) -> {
+			Board board = new Board();
+			board.setBbd_seq(rs.getLong("bbd_seq"));
+			board.setAns_seq(rs.getLong("ans_seq"));
+			return board;
 		};
 	}
 

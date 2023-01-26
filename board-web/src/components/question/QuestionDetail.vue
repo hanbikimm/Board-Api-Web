@@ -28,7 +28,28 @@
             </div>
             <div>
                 <p class="mt-4 content">{{ this.question.bbd_content }}</p>
-                <p>{{ this.question.bbd_attach_1 }}</p>
+
+                <button v-if="this.load.file_1 != ''" @click="downloadFile(this.load.file_1)"
+                class="mt-4 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_1 }}
+                </button>
+                <button v-if="this.load.file_2 != ''" @click="downloadFile(this.load.file_2)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_2 }}
+                </button>
+                <button v-if="this.load.file_3 != ''" @click="downloadFile(this.load.file_3)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_3 }}
+                </button>
+                <button v-if="this.load.file_4 != ''" @click="downloadFile(this.load.file_4)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_4 }}
+                </button>
+                <button v-if="this.load.file_5 != ''" @click="downloadFile(this.load.file_5)"
+                class="mt-1 block focus:outline-none border border-gray-300 font-medium rounded-full text-sm px-5 py-2.5 text-center">
+                    {{ this.load.file_5 }}
+                </button>
+
                 <hr class="mt-4"/>
             </div>
 
@@ -78,13 +99,17 @@
                             v-model="board.bbd_content"
                             class="block p-2.5 w-full text-sm text-gray-900 rounded-md border border-gray-300 hover:border-gray-400 focus:outline-none focus:border-gray-400"></textarea>
 
+                            
                         <label class="text-gray-700 ml-2">
-                            첨부
+                            (선택) 첨부
                         </label>
                         <input
-                            class="block w-full p-2 my-1 border border-gray-300 rounded hover:border-gray-400 focus:outline-none focus:border-gray-400"
-                            type="text"
-                            v-model="board.bbd_attach_1"/>
+                            class="block w-full p-1 rounded-md border border-gray-300 hover:border-gray-400 focus:border-gray-400 focus:outline-none"
+                            type="file" @change="addFile()" ref="boardImage" />
+                        <p v-for="file in this.files" :key="file.name">
+                            &nbsp;- {{file.name}} &nbsp;
+                        <button @click="deleteFile(this.files.indexOf(file))" class="font-bold">X</button>
+                        </p>
 
                         <label class="text-gray-700 ml-2">
                             비밀번호 (4자리 숫자)
@@ -149,16 +174,68 @@ export default {
             show: false,
             question: {},
             answers:[],
-            board:{}
+            board:{},
+            files:[],
+            load:{
+                file_1: '',
+                file_2: '',
+                file_3: '',
+                file_4: '',
+                file_5: '',
+                bbd_attach_1: '',
+                bbd_attach_2: '',
+                bbd_attach_3: '',
+                bbd_attach_4: '',
+                bbd_attach_5: '',
+            }
             
         };
     },
 
     methods: {
+        addFile() {
+            if (this.files.length < 5) {
+            this.files.push(this.$refs.boardImage.files[0]);
+            }else {
+            alert('첨부파일은 5개까지만 등록이 가능합니다!');
+            }
+        },
+
+        deleteFile(index){
+            this.files.splice(index, 1);
+        },
+
+        downloadFile(fileName){
+            try {
+                const date = this.question.reg_datetime.slice(0,10);
+                const boardId = `${this.question.bbd_seq}-${this.question.ans_seq}`;
+                window.open(`http://localhost:8000/bbd/attach/${date}/${boardId}/${fileName}`);
+                // await BoardApi.downloadFile(date, boardId, fileName);
+            } catch (error) {
+                console.log(error);
+            }
+        },
+
         async getQuestionDetail(){
             try{
                 const data = await BoardApi.boardDetail(this.$route.params.bbdId, this.$route.params.ansId);
                 this.question = data;
+                if(this.question.bbd_attach_1 != null){
+                    this.load.file_1 = this.question.bbd_attach_1.substring(42, this.question.bbd_attach_1.length);
+                    if(this.question.bbd_attach_2 != null){
+                        this.load.file_2 = this.question.bbd_attach_2.substring(42, this.question.bbd_attach_2.length);
+                        if(this.question.bbd_attach_3 != null){
+                            this.load.file_3 = this.question.bbd_attach_3.substring(42, this.question.bbd_attach_3.length);
+                            if(this.question.bbd_attach_4 != null){
+                                this.load.file_4 = this.question.bbd_attach_4.substring(42, this.question.bbd_attach_4.length);
+                                if(this.question.bbd_attach_5 !=null){
+                                    this.load.file_5 = this.question.bbd_attach_5.substring(42, this.question.bbd_attach_5.length);
+                                }
+                            }
+                        }
+                    }
+                }
+                
             }catch(error){
                 console.log(error);
             }
@@ -181,7 +258,7 @@ export default {
                     if(input === this.question.bbd_password){
                         const message = await BoardApi.boardDelete(this.question.bbd_seq, this.question.ans_seq);
                         alert(`${message}`);
-                        if(message == "게시글을 삭제했습니다."){
+                        if(message == "성공적으로 삭제되었습니다."){
                             this.$router.push({name: 'boardList'});
                         }
                         
@@ -248,9 +325,20 @@ export default {
         async registerAnswer(){
           try {
             this.board.bbd_seq = this.$route.params.bbdId;
-            await BoardApi.answerCreate(this.board);
-            alert("답변 등록이 완료되었습니다!");
-            this.$router.go();
+            await BoardApi.postAnswer(this.board);
+            if(this.files.length > 0){
+                let i = 1;
+                for await (let file of this.files) {
+                    const formData = new FormData();
+                    formData.append('bbd_title', this.board.bbd_title);
+                    formData.append('img_seq', i);
+                    formData.append('img', file);
+                    BoardApi.postFile(formData);
+                    i = ++i;
+                }
+                alert('게시글이 등록되었습니다.');
+                this.$router.go();
+            }
           } catch (error) {
             console.log(error);
           }

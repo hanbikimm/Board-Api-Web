@@ -1,10 +1,10 @@
 <template>
     <div class="mt-5 ml-10">
-        <p 
+        <button 
         class="text-base cursor-pointer"
         @click="goToboardList()">
             > 다목적 게시판 가기
-        </p>
+        </button>
         <p class="text-2xl font-bold mt-5">운영 현황판</p>
     </div>
     <div class="m-10 flex items-center justify-center">

@@ -1,5 +1,7 @@
 package heyoom.first.board.service;
 
+import java.io.File;
+import java.io.IOException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,16 +10,23 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import heyoom.first.board.domain.Board;
 import heyoom.first.board.domain.BoardStatus;
 import heyoom.first.board.repository.BoardRepository;
 import heyoom.first.security.Seed;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class BoardService {
 
 	private final BoardRepository boardRepository;
+	
+	@Value("${file.dir}")
+	private String fileDir;
 	
 	public BoardService(BoardRepository boardRepository) {
 		this.boardRepository = boardRepository;
@@ -81,43 +90,74 @@ public class BoardService {
 	}
 	
 	@Transactional
-	public Board createQuestion(Board board) {
-		System.out.println(board.getBbd_attach_1());
-		System.out.println(board.getBbd_attach_2());
-		System.out.println(board.getBbd_attach_3());
-		System.out.println(board.getBbd_attach_4());
-		System.out.println(board.getBbd_attach_5());
-		System.out.println(board.getBbd_attach_length());
+	public Board createContentsForQuestion(Board board) {
 		Board boardForm = new Board();
 		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
-		boardForm.setBbd_attach_1(board.getBbd_attach_1());
-		boardForm.setBbd_attach_2(board.getBbd_attach_2());
-		boardForm.setBbd_attach_3(board.getBbd_attach_3());
-		boardForm.setBbd_attach_4(board.getBbd_attach_4());
-		boardForm.setBbd_attach_5(board.getBbd_attach_5());
 		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
-		return boardRepository.postQuestion(boardForm);
+		boardRepository.postQuestion(boardForm);
+		
+		Optional<Board> boardId = boardRepository.getBoardId(board.getBbd_title());
+		boardRepository.plusWrite(boardId.get().getBbd_seq(), boardId.get().getAns_seq());
+		return board;
 	}
 	
 	@Transactional
-	public Board createAnswer(Board board) {
+	public Board createContentsForAnswer(Board board) {
 		Board boardForm = new Board();
 		boardForm.setBbd_seq(board.getBbd_seq());
 		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
 		boardForm.setBbd_title(board.getBbd_title());
 		boardForm.setBbd_content(board.getBbd_content());
-		boardForm.setBbd_attach_1(board.getBbd_attach_1());
-		boardForm.setBbd_attach_2(board.getBbd_attach_2());
-		boardForm.setBbd_attach_3(board.getBbd_attach_3());
-		boardForm.setBbd_attach_4(board.getBbd_attach_4());
-		boardForm.setBbd_attach_5(board.getBbd_attach_5());
 		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
 		boardForm.setInq_security_yn(board.getInq_security_yn());
-		return boardRepository.postAnswer(boardForm);
+		boardRepository.postAnswer(boardForm);
+		
+		Optional<Board> boardId = boardRepository.getBoardId(board.getBbd_title());
+		boardRepository.plusWrite(boardId.get().getBbd_seq(), boardId.get().getAns_seq());
+		return board;
 	}
+	
+	public String createImgForBoard(MultipartFile img, Long img_seq, String bbd_title) throws Exception, IOException {
+
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+		String typeString = dateFormat.format(Calendar.getInstance().getTime());
+		Optional<Board> board = boardRepository.getBoardId(bbd_title);
+		String bbd_seq = Long.toString(board.get().getBbd_seq());
+		String ans_seq = Long.toString(board.get().getAns_seq());
+		String board_seq = bbd_seq + '-' + ans_seq ;
+		
+		if(!img.isEmpty()) {
+			String folderPath = fileDir + typeString + '/' + board_seq + '/';
+//			System.getProperty("user.dir") +
+			File file = new File(folderPath);
+			if (!file.exists()) {
+				if(file.mkdirs()) {
+					log.info("폴더 생성 성공");
+				}else {
+					log.info("폴더 생성 실패");
+				}
+			}else {
+				log.info("폴더 이미 존재");
+			}
+			
+			String fullPath = folderPath + img.getOriginalFilename();
+			log.info("fullPath= {}", fullPath);
+			img.transferTo(new File(file, img.getOriginalFilename()));
+			
+			return boardRepository.postImg(fullPath, img_seq, bbd_title);
+			
+		}else {
+			
+			return null;
+		}
+		
+		
+	}
+	
+	
 	
 	@Transactional
 	public String eraseBoard(Long bbdId, Long ansId) {
@@ -148,7 +188,13 @@ public class BoardService {
 	}
 	
 	public String updateDayWrites(Long bbdId, Long ansId) {
-		return boardRepository.plusWrite(bbdId, ansId);
+		int count = boardRepository.checkWrite(bbdId, ansId);
+		if (count == 0) {
+			return boardRepository.plusWrite(bbdId, ansId);
+		} else {
+			return null;
+		}
+		
 	}
 	
 	
