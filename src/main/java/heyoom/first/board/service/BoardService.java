@@ -91,13 +91,9 @@ public class BoardService {
 	
 	@Transactional
 	public Board createContentsForQuestion(Board board) {
-		Board boardForm = new Board();
-		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
-		boardForm.setBbd_title(board.getBbd_title());
-		boardForm.setBbd_content(board.getBbd_content());
-		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
-		boardForm.setInq_security_yn(board.getInq_security_yn());
-		boardRepository.postQuestion(boardForm);
+		board.setReg_writer(Seed.encrypt(board.getReg_writer()));
+		board.setBbd_password(Seed.encrypt(board.getBbd_password()));
+		boardRepository.postQuestion(board);
 		
 		Optional<Board> boardId = boardRepository.getBoardId(board.getBbd_title());
 		boardRepository.plusWrite(boardId.get().getBbd_seq(), boardId.get().getAns_seq());
@@ -106,14 +102,9 @@ public class BoardService {
 	
 	@Transactional
 	public Board createContentsForAnswer(Board board) {
-		Board boardForm = new Board();
-		boardForm.setBbd_seq(board.getBbd_seq());
-		boardForm.setReg_writer(Seed.encrypt(board.getReg_writer()));
-		boardForm.setBbd_title(board.getBbd_title());
-		boardForm.setBbd_content(board.getBbd_content());
-		boardForm.setBbd_password(Seed.encrypt(board.getBbd_password()));
-		boardForm.setInq_security_yn(board.getInq_security_yn());
-		boardRepository.postAnswer(boardForm);
+		board.setReg_writer(Seed.encrypt(board.getReg_writer()));
+		board.setBbd_password(Seed.encrypt(board.getBbd_password()));
+		boardRepository.postAnswer(board);
 		
 		Optional<Board> boardId = boardRepository.getBoardId(board.getBbd_title());
 		boardRepository.plusWrite(boardId.get().getBbd_seq(), boardId.get().getAns_seq());
@@ -130,8 +121,7 @@ public class BoardService {
 		String board_seq = bbd_seq + '-' + ans_seq ;
 		
 		if(!img.isEmpty()) {
-			String folderPath = fileDir + typeString + '/' + board_seq + '/';
-//			System.getProperty("user.dir") +
+			String folderPath = fileDir + typeString + '/';
 			File file = new File(folderPath);
 			if (!file.exists()) {
 				if(file.mkdirs()) {
@@ -143,9 +133,10 @@ public class BoardService {
 				log.info("폴더 이미 존재");
 			}
 			
-			String fullPath = folderPath + img.getOriginalFilename();
+			String storeFileName = board_seq + '_' + img.getOriginalFilename();
+			String fullPath = folderPath + storeFileName;
 			log.info("fullPath= {}", fullPath);
-			img.transferTo(new File(file, img.getOriginalFilename()));
+			img.transferTo(new File(file, storeFileName));
 			
 			return boardRepository.postImg(fullPath, img_seq, bbd_title);
 			
@@ -162,16 +153,46 @@ public class BoardService {
 	@Transactional
 	public String eraseBoard(Long bbdId, Long ansId) {
 		String message = null;
+		Optional<Board> board = boardRepository.getBoardAttach(bbdId, ansId);
+		List<String> attachList = new ArrayList<String>();
+		attachList.add(board.get().getBbd_attach_1());
+		attachList.add(board.get().getBbd_attach_2());
+		attachList.add(board.get().getBbd_attach_3());
+		attachList.add(board.get().getBbd_attach_4());
+		attachList.add(board.get().getBbd_attach_5());
+		File file;
+		
+		
+		
 		if (ansId == 0) {
 			int count = boardRepository.checkAnswersForDelete(bbdId);
 			if (count > 0) {
 				message = "답변이 존재해 삭제할 수 없습니다!";
 			} else {
+				for (String attach : attachList) {
+					if(attach != null) {
+						file = new File(attach);
+						if(file.delete()) {
+							log.info("파일 삭제 성공");
+						}else {
+							log.info("파일 삭제 실패");
+						}
+					}
+				}
 				message = boardRepository.deleteBoard(bbdId, ansId);
 			}
 		} else {
+			for (String attach : attachList) {
+				if(attach != null) {
+					file = new File(attach);
+					if(file.delete()) {
+						log.info("파일 삭제 성공");
+					}else {
+						log.info("파일 삭제 실패");
+					}
+				}
+			}
 			message = boardRepository.deleteBoard(bbdId, ansId);
-			;
 		}
 		return message;
 	}

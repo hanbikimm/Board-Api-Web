@@ -15,6 +15,7 @@ public interface BoardRepository {
 	Optional<Board> getBoard(Long bbdId, Long ansId);
 	int getTotalBoards();
 	Optional<Board> getBoardId(String title);
+	Optional<Board> getBoardAttach(Long bbdId, Long ansId);
 	List<BoardStatus> getChart(List<String> week);
 	String postImg(String fullPath, Long img_seq, String bbd_title);
 	Board postQuestion(Board board);

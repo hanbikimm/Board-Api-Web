@@ -1,9 +1,9 @@
 package heyoom.first.board.controller;
 
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
+//import java.io.File;
+//import java.io.FileInputStream;
+//import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.nio.charset.StandardCharsets;
@@ -12,7 +12,7 @@ import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.core.io.InputStreamResource;
+//import org.springframework.core.io.InputStreamResource;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpHeaders;
@@ -111,13 +111,16 @@ public class BoardController {
 //	}
 	
 	// 첨부파일 다운로드
-	@GetMapping("/attach/{fileDate}/{boardId}/{fileName}")
-	public ResponseEntity<Resource> downloadAttach(@PathVariable String fileDate, @PathVariable String boardId, @PathVariable String fileName) throws MalformedURLException{
+	@GetMapping("/attach/{fileDate}/{fileName}")
+	public ResponseEntity<Resource> downloadAttach(@PathVariable String fileDate, @PathVariable String fileName) throws MalformedURLException{
 		
-		UrlResource urlResource = new UrlResource("file:" + fileDir + fileDate + "/" + boardId + "/" + fileName);
+		UrlResource urlResource = new UrlResource("file:" + fileDir + fileDate + "/" + fileName);
 		
 		log.info("fileDate = {}", fileDate);
-		log.info("boardId= {}", boardId);
+		
+		// board id 제외하기
+		int index = fileName.indexOf('_') + 1;
+		fileName = fileName.substring(index);
 		log.info("fileName= {}", fileName);
 		
 		String encodedUploadFileName = UriUtils.encode(fileName, StandardCharsets.UTF_8);

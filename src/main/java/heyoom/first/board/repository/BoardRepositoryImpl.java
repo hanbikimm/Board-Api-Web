@@ -53,6 +53,13 @@ public class BoardRepositoryImpl implements BoardRepository {
 	}
 	
 	@Override
+	public Optional<Board> getBoardAttach(Long bbdId, Long ansId){
+		List<Board> result = jdbcTemplate.query("SELECT bbd_attach_1, bbd_attach_2, bbd_attach_3, bbd_attach_4, bbd_attach_5\r\n"
+				+ "FROM t_bbd WHERE bbd_seq =? AND ans_seq =?", boardAttachMapper(), bbdId, ansId);
+		return result.stream().findAny();
+	}
+	
+	@Override
 	public List<Board> getBoardsOfTitle(String searchWord) {
 		String sql = "SELECT a.bbd_seq, a.ans_seq, a.inq_security_yn, a.bbd_title, \r\n"
 				+ "(SELECT MAX(ans_seq) FROM bbd.t_bbd WHERE bbd_seq = a.bbd_seq) AS answer_count,\r\n"
@@ -367,6 +374,18 @@ public class BoardRepositoryImpl implements BoardRepository {
 			Board board = new Board();
 			board.setBbd_seq(rs.getLong("bbd_seq"));
 			board.setAns_seq(rs.getLong("ans_seq"));
+			return board;
+		};
+	}
+	
+	private RowMapper<Board> boardAttachMapper(){
+		return (rs, rowNum) -> {
+			Board board = new Board();
+			board.setBbd_attach_1(rs.getString("bbd_attach_1"));
+			board.setBbd_attach_2(rs.getString("bbd_attach_2"));
+			board.setBbd_attach_3(rs.getString("bbd_attach_3"));
+			board.setBbd_attach_4(rs.getString("bbd_attach_4"));
+			board.setBbd_attach_5(rs.getString("bbd_attach_5"));
 			return board;
 		};
 	}
