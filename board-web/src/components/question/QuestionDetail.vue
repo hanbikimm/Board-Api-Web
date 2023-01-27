@@ -209,7 +209,7 @@ export default {
             try {
                 const date = this.question.reg_datetime.slice(0,10);
                 const boardId = `${this.question.bbd_seq}-${this.question.ans_seq}`;
-                window.open(`http://localhost:8000/bbd/attach/${date}/${boardId}/${fileName}`);
+                window.open(`http://localhost:8000/bbd/attach/${date}/${boardId}_${fileName}`);
                 // await BoardApi.downloadFile(date, boardId, fileName);
             } catch (error) {
                 console.log(error);
@@ -220,16 +220,17 @@ export default {
             try{
                 const data = await BoardApi.boardDetail(this.$route.params.bbdId, this.$route.params.ansId);
                 this.question = data;
+                const index = this.question.bbd_attach_1.indexOf('_') + 1;
                 if(this.question.bbd_attach_1 != null){
-                    this.load.file_1 = this.question.bbd_attach_1.substring(42, this.question.bbd_attach_1.length);
+                    this.load.file_1 = this.question.bbd_attach_1.substring(index, this.question.bbd_attach_1.length);
                     if(this.question.bbd_attach_2 != null){
-                        this.load.file_2 = this.question.bbd_attach_2.substring(42, this.question.bbd_attach_2.length);
+                        this.load.file_2 = this.question.bbd_attach_2.substring(index, this.question.bbd_attach_2.length);
                         if(this.question.bbd_attach_3 != null){
-                            this.load.file_3 = this.question.bbd_attach_3.substring(42, this.question.bbd_attach_3.length);
+                            this.load.file_3 = this.question.bbd_attach_3.substring(index, this.question.bbd_attach_3.length);
                             if(this.question.bbd_attach_4 != null){
-                                this.load.file_4 = this.question.bbd_attach_4.substring(42, this.question.bbd_attach_4.length);
+                                this.load.file_4 = this.question.bbd_attach_4.substring(index, this.question.bbd_attach_4.length);
                                 if(this.question.bbd_attach_5 !=null){
-                                    this.load.file_5 = this.question.bbd_attach_5.substring(42, this.question.bbd_attach_5.length);
+                                    this.load.file_5 = this.question.bbd_attach_5.substring(index, this.question.bbd_attach_5.length);
                                 }
                             }
                         }

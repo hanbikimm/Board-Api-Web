@@ -7,7 +7,7 @@
         > 운영 현황판 가기
         </button>
     </div>    
-    <div class="ml-10 my-3 grid grid-cols-1 gap-6 sm:grid-cols-2">
+    <div class="ml-10 mb-3 grid grid-cols-1 gap-6 sm:grid-cols-2">
         <div>
             <p class="text-2xl font-bold mt-5 mb-1">다목적 게시판</p>
             <p>: 총 {{ total }} 건의 게시물</p>
