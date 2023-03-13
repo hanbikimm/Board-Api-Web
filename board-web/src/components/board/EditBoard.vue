@@ -173,6 +173,7 @@ export default {
     return {
       open: false,
       board: {},
+      files: [],
     };
   },
   methods: {

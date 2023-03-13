@@ -162,8 +162,6 @@ public class BoardService {
 		attachList.add(board.get().getBbd_attach_5());
 		File file;
 		
-		
-		
 		if (ansId == 0) {
 			int count = boardRepository.checkAnswersForDelete(bbdId);
 			if (count > 0) {
